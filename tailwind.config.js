@@ -3,10 +3,20 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
+  
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        rosa: '#E966A0',
+        negroMate: '#191825',
+        lila: '#E384FF',
+        fucsia: '#FB2576'
+      }
+    },
   },
-  plugins: [],
+  darkMode: "class",
+  plugins: [nextui()],
 }
 
