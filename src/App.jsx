@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      <h1>Inicio Ecommerce mayorista</h1>
+      <h1 className='text-[30px] font-bold'>Inicio Ecommerce mayorista</h1>
     </>
   )
 }
