@@ -14,7 +14,10 @@ export default {
         'negroMate': '#191825',
         'lila': '#E384FF',
         'fucsia': '#FB2576',
-      }
+      },
+      transitionDuration: {
+        '3000': '3000ms', // Define la duración de 3 segundos
+      },
     },
   },
   darkMode: "class",
