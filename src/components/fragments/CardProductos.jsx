@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import ropa1 from '../../img/1.png';
 import ropa2 from '../../img/2.png';
@@ -28,7 +29,7 @@ const CardProductos = () => {
           <CardFooter className="text-small justify-between">
             <b>titulo</b>
             <p className="text-default-500">$100</p>
-            <Button color="secondary">Comprar</Button>
+            <Button  as={Link} to='/error404' color="secondary">Comprar</Button>
           </CardFooter>
         </Card>
 
@@ -52,7 +53,7 @@ const CardProductos = () => {
           <CardFooter className="text-small justify-between">
             <b>titulo</b>
             <p className="text-default-500">$100</p>
-            <Button color="secondary">Comprar</Button>
+            <Button  as={Link} to='/error404' color="secondary">Comprar</Button>
           </CardFooter>
         </Card>
 
@@ -76,7 +77,7 @@ const CardProductos = () => {
           <CardFooter className="text-small justify-between">
             <b>titulo</b>
             <p className="text-default-500">$100</p>
-            <Button color="secondary">Comprar</Button>
+            <Button  as={Link} to='/error404' color="secondary">Comprar</Button>
           </CardFooter>
         </Card>
 
@@ -100,7 +101,7 @@ const CardProductos = () => {
           <CardFooter className="text-small justify-between">
             <b>titulo</b>
             <p className="text-default-500">$100</p>
-            <Button color="secondary">Comprar</Button>
+            <Button  as={Link} to='/error404' color="secondary">Comprar</Button>
           </CardFooter>
         </Card>
       </div>
