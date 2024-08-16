@@ -61,15 +61,11 @@ const Menu = () => {
       <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden menu-toggle"
-          onChange={(open) => setIsMenuOpen(open)}
+      
         />
       <NavbarMenu
-        className={`sm:hidden fixed    w-2/3 bg-[#dd1c1c2a] backdrop-filter backdrop-blur-md p-5 rounded-br-2xl transition-transform duration-300 transform shadow-lg overflow-y-auto flex flex-col justify-center z-50`}
-        motionProps={{
-          initial: { opacity: 0, transform: 'translateX(-100%)' },
-          animate: { opacity: 1, transform: 'translateX(0)' },
-          exit: { opacity: 1, transform: 'translateX(-100%)' },
-        }}
+        className={`sm:hidden mx-auto  backdrop-filter backdrop-blur-md bg-opacity-70 rounded-2xl p-5 bg-[#8b89892a]  shadow-lg  overflow-y-auto flex flex-col justify-center`}
+      
       >
 
         <Link to='/'>
