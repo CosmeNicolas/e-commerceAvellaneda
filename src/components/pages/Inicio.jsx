@@ -1,9 +1,8 @@
 import React from 'react';
-// Importa los módulos necesarios de Swiper
 import { Navigation, Pagination, Scrollbar, Autoplay } from 'swiper/modules';
-// Importa los componentes Swiper y SwiperSlide
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import CardProductos from '../fragments/CardProductos';
+import {Divider} from "@nextui-org/react";
 // Importa los estilos de Swiper
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -15,6 +14,7 @@ import ropa3 from '../../img/3.png';
 
 const Inicio = () => {
   return (
+    <>
     <Swiper
       // Instala los módulos de Swiper
       modules={[Navigation, Pagination, Scrollbar, Autoplay]}
@@ -41,6 +41,10 @@ const Inicio = () => {
       </SwiperSlide>
   
     </Swiper>
+    <h1 className='font-bold font-sans text-center p-3 underline text-2xl'>Nuestros Productos</h1>
+    <Divider className="my-4" />
+    <CardProductos></CardProductos>
+    </>
   );
 };
 

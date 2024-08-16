@@ -2,6 +2,7 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, Navba
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from '../../img/favicon-moda.png'
+import { FaShoppingCart } from "react-icons/fa";
 
 const Menu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,7 +37,7 @@ const Menu = () => {
             to="/donaciones"
             className={`font-bold ${location.pathname === '/donaciones' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
-            Donaciones
+            Productos
           </Link>
         </NavbarItem>
         <NavbarItem isActive={location.pathname === '/formulario'}>
@@ -44,7 +45,7 @@ const Menu = () => {
             to="/formulario"
             className={`font-bold ${location.pathname === '/formulario' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
-            Formulario Donación
+            Contacto
           </Link>
         </NavbarItem>
         <NavbarItem isActive={location.pathname === '/ComoReciclar'}>
@@ -52,9 +53,18 @@ const Menu = () => {
             to="/ComoReciclar"
             className={`font-bold ${location.pathname === '/ComoReciclar' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
-            Cómo usar la app
+            Donde estamos
           </Link>
         </NavbarItem>
+        <NavbarItem isActive={location.pathname === '/carrito'}>
+          <Link
+            to="/carrito"
+            className={`font-bold ${location.pathname === '/ComoReciclar' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+          >
+          <FaShoppingCart />
+          </Link>
+        </NavbarItem>
+        
       </NavbarContent>
 
       {/* Pantallas pequeñas */}
@@ -78,14 +88,18 @@ const Menu = () => {
             Inicio
           </Button>
           <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/donaciones'>
-            Donaciones
+            Productos
           </Button>
           <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/formulario'>
-            Formulario Donación
+            Contacto
           </Button>
           <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/ComoReciclar'>
-            Cómo usar la app
+            Donde estamos 
           </Button>
+          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/carrito'>
+          <FaShoppingCart />
+          </Button>
+       
         </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
