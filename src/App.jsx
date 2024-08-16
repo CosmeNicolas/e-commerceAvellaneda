@@ -4,6 +4,7 @@ import './index.css'
 import Inicio from './components/pages/Inicio'
 import Menu from './components/common/Menu'
 import Footer from './components/common/Footer'
+import Error404 from './components/pages/Error404'
 function App() {
  
 
@@ -14,6 +15,7 @@ function App() {
     <div className='flex-grow'>
     <Routes>
       <Route extact path='/' element={<Inicio/>}/>
+      <Route extact path='/error404' element={<Error404/>}/>
     </Routes>
     </div>
     <Footer/>

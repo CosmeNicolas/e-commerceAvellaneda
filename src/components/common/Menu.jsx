@@ -34,34 +34,34 @@ const Menu = () => {
         </NavbarItem>
         <NavbarItem isActive={location.pathname === '/donaciones'}>
           <Link
-            to="/donaciones"
-            className={`font-bold ${location.pathname === '/donaciones' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/"
+            className={`font-bold ${location.pathname === '/error404' ? 'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
             Productos
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={location.pathname === '/formulario'}>
+        <NavbarItem isActive={location.pathname === '/error404'}>
           <Link
-            to="/formulario"
-            className={`font-bold ${location.pathname === '/formulario' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/"
+            className={`font-bold ${location.pathname === '/error404' ? ' rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
             Contacto
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={location.pathname === '/ComoReciclar'}>
+        <NavbarItem isActive={location.pathname === '/error404'}>
           <Link
-            to="/ComoReciclar"
-            className={`font-bold ${location.pathname === '/ComoReciclar' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/error404"
+            className={`font-bold ${location.pathname === '/error404' ? 'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
             Donde estamos
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={location.pathname === '/carrito'}>
+        <NavbarItem isActive={location.pathname === '/error404'}>
           <Link
-            to="/carrito"
-            className={`font-bold ${location.pathname === '/ComoReciclar' ? 'bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/error404"
+            className={` font-bold p-2`}
           >
-          <FaShoppingCart />
+          <FaShoppingCart className="text-white   "/>
           </Link>
         </NavbarItem>
         
@@ -87,16 +87,16 @@ const Menu = () => {
           <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold my-1 bg-fucsia border-black text-white" to='/'>
             Inicio
           </Button>
-          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/donaciones'>
+          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
             Productos
           </Button>
-          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/formulario'>
+          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
             Contacto
           </Button>
-          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/ComoReciclar'>
+          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
             Donde estamos 
           </Button>
-          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/carrito'>
+          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
           <FaShoppingCart />
           </Button>
        
