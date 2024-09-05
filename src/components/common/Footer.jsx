@@ -67,7 +67,7 @@ const Footer = () => {
             <ul className=" flex justify-center text-slate-200 mt-1">
               <Link to="https://www.tiktok.com/@luzbell122?lang=es">
                 <li>
-                  <FaTiktok className="text-[#000] " />
+                  <FaTiktok className="text-fuchsia-400 " />
                 </li>
               </Link>
               <Link to="https://www.facebook.com/luz.bellavellaneda.5">
