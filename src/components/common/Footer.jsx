@@ -8,11 +8,11 @@ import { FaStoreAlt } from "react-icons/fa"; //tienda icono
 import luzbell from '../../img/LuzBell.svg'
 const Footer = () => {
   return (
-    <footer className="bg-negroMate  text-white ">
+    <footer className="bg-negroMate  text-white pt-8 px-8">
+      <section className='container mx-auto'>
+        <article className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap 4'>
       <article>
         <img src={luzbell} alt="logoLuzbell" width={100} height={100} />
-      </article>
-      <article className="text-center">
         Donde estamos ?
         <FaLocationDot />
         <p> Av. Avellaneda 3142</p>
@@ -20,10 +20,11 @@ const Footer = () => {
         <p>www.luzbell.com.ar</p>
       </article>
       <article className="">
-        <p className="text-lg text-blue-50 font-oswald font-bold ">
-          Sigueme
+
+        <p className="text-lg text-center text-blue-50 font-oswald font-bold ">
+          Nuestras Redes
         </p>
-        <ul className="  text-slate-200 mt-1">
+        <ul className="flex items-center justify-around  text-slate-200 mt-1">
           <Link to="https://www.tiktok.com/@luzbell122?lang=es">
             <li>
               <FaTiktok className="text-[#000] " />
@@ -50,12 +51,13 @@ const Footer = () => {
           </li>
         </ul>
       </article>
-      <div className="bg-azul-oscuro rounded-xl p-4">
-        <p className="text-lg text-slate-200">
-          &copy; Todos los derechos reservados
-        </p>
-        <p className=" text-slate-200 text-lg  ">
-          Hecho con <BsHeartFill className="text-fucsia m-1" />{" "}
+      </article>
+      </section>
+          <hr />
+      <div className="bg-azul-oscuro rounded-xl flex flex-col text-center p-4">
+        <p className="text-sm text-slate-200 flex  text-center justify-center">
+          &copy; Todos los derechos reservados - 
+          Hecho con <BsHeartFill className="text-fucsia m-1" />
         </p>
       </div>
     </footer>
