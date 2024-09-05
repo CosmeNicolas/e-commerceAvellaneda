@@ -29,7 +29,7 @@ const CardProductos = () => {
           <CardFooter className="text-small justify-between">
             <b>titulo</b>
             <p className="text-default-500">$100</p>
-            <Button  as={Link} to='/error404' color="secondary">Comprar</Button>
+            <Button  as={Link} to='/detalleProducto' color="secondary">Comprar</Button>
           </CardFooter>
         </Card>
 
