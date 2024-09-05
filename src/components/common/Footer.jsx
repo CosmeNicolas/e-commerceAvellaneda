@@ -34,6 +34,18 @@ const Footer = () => {
                 <FaWhatsapp className="mt-1 me-1" />
                 1130516831
               </li>
+              <li className="flex justify-center">
+                <FaWhatsapp className="mt-1 me-1" />
+                1134259004
+              </li>
+             {/*  <li className="flex justify-center">
+                <FaWhatsapp className="mt-1 me-1" />
+                1126519321
+              </li>
+              <li className="flex justify-center">
+                <FaWhatsapp className="mt-1 me-1" />
+                1166654412
+              </li> */}
             </ul>
           </article>
           <article>
