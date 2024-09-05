@@ -24,7 +24,28 @@ const Footer = () => {
               width={120}
               height={120}
             />
-          <Divider orientation="vertical" className="bg-white mx-5"/>
+          {/* <Divider orientation="vertical" className="bg-white hidden lg:block"/> */}
+          </article>
+         
+          <article className="text-center">
+            <p className="text-lg text-blue-50 font-bold">Contactanos</p>
+            <ul className="text-blue-50 list-none ">
+              <li className="flex justify-center">
+                <FaWhatsapp className="mt-1 me-1" />
+                1130516831
+              </li>
+            </ul>
+          </article>
+          <article>
+            <p className="text-lg font-bold text-center">Donde estamos</p>
+            <div className="flex justify-center">
+              <FaLocationDot className="mt-1 me-1" />
+              <p> Av. Avellaneda 3142</p>
+            </div>
+            <div className="flex mb-5 justify-center">
+              <FaStoreAlt className="mt-1 me-1" />
+              <p>www.luzbell.com.ar</p>
+            </div>
           </article>
           <article className="">
             <p className="text-lg text-center text-blue-50 font-oswald font-bold ">
@@ -48,26 +69,6 @@ const Footer = () => {
                 </li>
               </Link>
             </ul>
-          </article>
-          <article className="text-center">
-            <p className="text-lg text-blue-50 font-bold">Contactanos</p>
-            <ul className="text-blue-50 list-none ">
-              <li className="flex justify-center">
-                <FaWhatsapp className="mt-1 me-1" />
-                1130516831
-              </li>
-            </ul>
-          </article>
-          <article>
-            <p className="text-lg font-bold">Donde estamos</p>
-            <div className="flex">
-              <FaLocationDot className="mt-1 me-1" />
-              <p> Av. Avellaneda 3142</p>
-            </div>
-            <div className="flex mb-5">
-              <FaStoreAlt className="mt-1 me-1" />
-              <p>www.luzbell.com.ar</p>
-            </div>
           </article>
         </article>
       </section>
