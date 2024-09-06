@@ -2,7 +2,8 @@ import React from 'react';
 import { Navigation, Pagination, Scrollbar, Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import CardProductos from '../fragments/CardProductos';
-import {Divider} from "@nextui-org/react";
+import Carousel from '../helpers/Carousel';
+/* import {Divider} from "@nextui-org/react"; */
 // Importa los estilos de Swiper
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -41,8 +42,8 @@ const Inicio = () => {
       </SwiperSlide>
   
     </Swiper>
-    <h1 className='font-bold font-sans text-center p-3 underline text-2xl'>Nuestros Productos</h1>
-    <Divider className="my-4" />
+   <Carousel></Carousel>
+   {/*  <Divider className="my-4" /> */}
     <CardProductos></CardProductos>
     </>
   );

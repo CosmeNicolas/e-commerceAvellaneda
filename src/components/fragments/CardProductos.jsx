@@ -27,7 +27,7 @@ const CardProductos = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto flex justify-center px-4">
+        <div className="container mx-auto flex justify-center min-h-screen error404 max-w-max px-4 bg-cover bg-center">
           <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {/* Primera tarjeta */}
             <motion.div
