@@ -42,9 +42,9 @@ const Inicio = () => {
       </SwiperSlide>
   
     </Swiper>
-   <Carousel></Carousel>
+   <Carousel/>
    {/*  <Divider className="my-4" /> */}
-    <CardProductos></CardProductos>
+    <CardProductos/>
     </>
   );
 };
