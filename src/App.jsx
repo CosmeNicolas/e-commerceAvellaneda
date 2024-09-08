@@ -5,6 +5,7 @@ import Menu from "./components/common/Menu";
 import Footer from "./components/common/Footer";
 import Error404 from "./components/pages/Error404";
 import DetalleProducto from "./components/fragments/DetalleProducto";
+import Contacto from "./components/pages/Contacto";
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +19,9 @@ function App() {
               exact
               path="/detalleProducto"
               element={<DetalleProducto />}
+            />
+            <Route
+            exact path='/contacto' element={<Contacto/>}
             />
           </Routes>
         </div>

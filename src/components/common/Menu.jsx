@@ -32,36 +32,37 @@ const Menu = () => {
             Inicio
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={location.pathname === '/donaciones'}>
+        <NavbarItem isActive={location.pathname === '/error404'}>
           <Link
-            to="/"
-            className={`font-bold ${location.pathname === '/error404' ? 'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/error404"
+            className={`font-bold ${location.pathname === '/error404' ?'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
             Productos
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={location.pathname === '/error404'}>
+        {/* Ver Unir contacto con locacion */}
+        <NavbarItem isActive={location.pathname === '/contacto'}>
           <Link
-            to="/"
-            className={`font-bold ${location.pathname === '/error404' ? ' rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/contacto"
+            className={`font-bold ${location.pathname === '/contacto' ? 'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
             Contacto
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={location.pathname === '/error404'}>
+      {/*   <NavbarItem isActive={location.pathname === '/dondeEstamos'}>
           <Link
-            to="/error404"
-            className={`font-bold ${location.pathname === '/error404' ? 'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
+            to="/dondeEstamos"
+            className={`font-bold ${location.pathname === '/dondeEstamos' ? 'rounded-md bg-rosa p-2 text-[#001524]' : 'text-white'}`}
           >
             Donde estamos
           </Link>
-        </NavbarItem>
+        </NavbarItem> */}
         <NavbarItem isActive={location.pathname === '/error404'}>
           <Link
             to="/error404"
-            className={` font-bold p-2`}
+            className={`font-bold p-2${location.pathname === '/error404' ? 'rounded-md bg-rosa text-white':'text-white'}`}
           >
-          <FaShoppingCart className="text-white   "/>
+          <FaShoppingCart className="text-white"/>
           </Link>
         </NavbarItem>
         
@@ -90,12 +91,13 @@ const Menu = () => {
           <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
             Productos
           </Button>
-          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
+          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/contacto'>
             Contacto
           </Button>
-          <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
+          {/* Borrar una vez creado el contacto */}
+         {/*  <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
             Donde estamos 
-          </Button>
+          </Button> */}
           <Button variant="bordered" as={Link} className="w-full flex justify-center font-bold bg-fucsia border-black text-white my-1" to='/error404'>
           <FaShoppingCart />
           </Button>
