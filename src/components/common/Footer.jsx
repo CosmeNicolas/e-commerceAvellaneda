@@ -10,7 +10,7 @@ import { FaTiktok } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaStoreAlt } from "react-icons/fa"; //tienda icono
 import luzbell from "../../img/LuzBell.svg";
-import { Divider } from "@nextui-org/react";
+
 const Footer = () => {
   return (
     <footer className="bg-negroMate  text-white pt-8 px-8">

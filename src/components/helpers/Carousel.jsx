@@ -18,13 +18,13 @@ const Carousel = () => {
   return (
     <Slider {...settings}>
       <div>
-        <h1 className='text-center  text-2xl bg-negroMate text-white font-sans'>20% OFF</h1>
+        <h1 className='text-center  text-2xl bg-negroMate text-white font-sans'>20% Camperas</h1>
       </div>
       <div>
-        <h1 className='text-center  text-2xl bg-negroMate text-white font-sans'>50% OFF</h1>
+        <h1 className='text-center  text-2xl bg-negroMate text-white font-sans'>50% Compra mayorista</h1>
       </div>
       <div>
-        <h1 className='text-center  text-2xl bg-negroMate text-white font-sans'>70% OFF</h1>
+        <h1 className='text-center  text-2xl bg-negroMate text-white font-sans'>30% Con tranferencia</h1>
       </div>
       {/* Agrega más slides si es necesario */}
     </Slider>
