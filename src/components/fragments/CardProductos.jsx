@@ -9,7 +9,7 @@ const CardProductos = () => {
 
   const fetchProductos = async () => {
     try {
-      const resultado = await fetch('https://fakestoreapi.com/products?limit=6');
+      const resultado = await fetch('https://fakestoreapi.com/products?limit=8');
       const respuesta = await resultado.json(); // Esperar a que el resultado sea un JSON
       setProductos(respuesta); // Actualizar el estado con los productos obtenidos
     } catch (error) {
