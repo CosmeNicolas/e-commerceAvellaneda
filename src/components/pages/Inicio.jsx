@@ -28,8 +28,8 @@ const Inicio = () => {
         delay: 5000, // Tiempo en milisegundos entre cambios de slide
         disableOnInteraction: false, // No detener la reproducción automática al interactuar
       }}
-      onSwiper={(swiper) => console.log(swiper)}
-      onSlideChange={() => console.log('slide change')}
+     /*  onSwiper={(swiper) => console.log(swiper)}
+      onSlideChange={() => console.log('slide change')} */
     >
       <SwiperSlide className='bg-black'>
         <img src={ropa1} alt="Ropa 1" className="w-full h-[300px] object-cover" />
