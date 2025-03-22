@@ -3,22 +3,24 @@ import { Link } from 'react-router-dom';
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import axios from 'axios';
+
 
 const CardProductos = () => {
   const [productos, setProductos] = useState([]);
 
-  const fetchProductos = async () => {
+  const axiosProductos = async () => {
     try {
-      const resultado = await fetch('https://fakestoreapi.com/products?limit=8');
-      const respuesta = await resultado.json(); // Esperar a que el resultado sea un JSON
-      setProductos(respuesta); // Actualizar el estado con los productos obtenidos
+      const resultado = await axios.get('http://localhost:3001/api/productos');
+      console.log("Datos recibidos:", resultado.data);
+      setProductos(resultado.data.productos); // ✅ Acceder al array de productos
     } catch (error) {
       console.error("Error al obtener los productos:", error);
     }
   };
 
   useEffect(() => {
-    fetchProductos(); // Llamar a la función para obtener los productos cuando el componente se monte
+    axiosProductos();
   }, []);
 
   const cardVariants = {
@@ -29,39 +31,33 @@ const CardProductos = () => {
   const [ref1, inView1] = useInView({ triggerOnce: true, threshold: 0.2 });
 
   return (
-    <div className="container mx-auto flex justify-center min-h-screen error404 max-w-max px-4 bg-cover bg-center">
+    <div className="container mx-auto flex justify-center min-h-screen px-4 bg-cover bg-center">
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Mapear los productos obtenidos de la API */}
         {productos.map((producto) => (
           <motion.div
-            key={producto.id}
+            key={producto._id}
             ref={ref1}
             initial="hidden"
             animate={inView1 ? "visible" : "hidden"}
             variants={cardVariants}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-            <Card
-              className="p-2 h-[350px] sm:h-[400px] lg:h-[450px] m-2"
-              shadow="sm"
-              isPressable
-              onPress={() => console.log("item pressed")}
-            >
+            <Card className="p-2 h-[350px] sm:h-[400px] lg:h-[450px] m-2" shadow="sm" isPressable>
               <CardBody className="overflow-visible p-0">
                 <Image
                   shadow="sm"
                   radius="lg"
                   width="100%"
-                  alt={producto.title}
+                  alt={producto.nombreProducto}
                   className="w-full object-cover h-[140px]"
-                  src={producto.image}
+                  src={producto.imagen}
                 />
-                <p className="mt-2">{producto.description}</p>
+                <p className="mt-2">{producto.descripcion}</p>
               </CardBody>
               <CardFooter className="text-small justify-between">
-                <b>{producto.title}</b>
-                <p className="text-default-500">${producto.price}</p>
-                <Button as={Link} to={`/detalleProducto/${producto.id}`} color="secondary">
+                <b>{producto.nombreProducto}</b>
+                <p className="text-default-500">${producto.precio}</p>
+                <Button as={Link} to={`/detalleProducto/${producto._id}`} color="secondary">
                   Comprar
                 </Button>
               </CardFooter>
@@ -74,5 +70,3 @@ const CardProductos = () => {
 };
 
 export default CardProductos;
-
-

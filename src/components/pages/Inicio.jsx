@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigation, Pagination, Scrollbar, Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import CardProductos from '../fragments/CardProductos';
