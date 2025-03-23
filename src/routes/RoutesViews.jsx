@@ -5,12 +5,14 @@ import Error404 from "../components/pages/Error404";
 import Contacto from "../components/pages/Contacto";
 import DetalleProducto from '../components/fragments/DetalleProducto';
 import Footer from '../components/common/Footer';
-import LoginPage from '../components/pages/Login'; // Importa el componente de Login
+import Login from '../components/pages/Login'; // Importa el componente de Login
 import Registro from '../components/pages/Registro'; // Importa el componente de Registro
+import Administrador from '../components/pages/Administrador';
+
 
 const RoutesViews = () => {
   return (
-    <div className="relative flex flex-col min-h-screen">
+    <div className="min-h-screen bg-cover bg-center fondo" >
       <Menu />
       <div className="flex-grow">
         <Routes>
@@ -19,8 +21,9 @@ const RoutesViews = () => {
           <Route exact path="/detalleProducto/:idProducto" element={<DetalleProducto />} />
           <Route exact path="/contacto" element={<Contacto />} />
           {/* Agrega las rutas de Login y Registro */}
-          <Route exact path="/login" element={<LoginPage />} />
+          <Route exact path="/login" element={<Login/>} />
           <Route exact path="/registro" element={<Registro />} />
+          <Route exact path="/administrador" element={<Administrador />} />
         </Routes>
       </div>
       <Footer />

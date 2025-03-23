@@ -64,11 +64,11 @@ const FormularioRegistro = ({ idPage }) => {
         sessionStorage.setItem("idUsuario", JSON.stringify(result.data.idUsuario));
         if (result.data.rol === "usuario") {
           setTimeout(() => {
-            navigate("/user");
+            navigate("/");
           }, 1000);
         } else {
           setTimeout(() => {
-            navigate("/admin");
+            navigate("/administrador");
           }, 1000);
         }
       }
