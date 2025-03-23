@@ -58,7 +58,7 @@ const CardProductos = () => {
                 <b>{producto.nombreProducto}</b>
                 <p className="text-default-500">${producto.precio}</p>
                 <Button as={Link} to={`/detalleProducto/${producto._id}`} color="secondary">
-                  Comprar
+                  Ver Detalles
                 </Button>
               </CardFooter>
             </Card>

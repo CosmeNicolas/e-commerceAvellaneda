@@ -17,7 +17,7 @@ const RoutesViews = () => {
             <Route exact path="/error404" element={<Error404 />} />
             <Route
               exact
-              path="/detalleProducto/"
+              path="/detalleProducto/:idProducto"
               element={<DetalleProducto />}
             />
             <Route

@@ -1,74 +1,73 @@
-import React from "react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  Link,
-  Button,
-  Image,
-} from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Button, Image } from "@nextui-org/react";
+import clienteAxios, { configHeaders } from "../../helpers/axios";
 
 const DetalleProducto = () => {
+  const { idProducto } = useParams(); // 📌 Obtener el parámetro de la URL
+  const [producto, setProducto] = useState(null); // Inicializar como null
+  const [loading, setLoading] = useState(true); // Estado para manejar la carga
+  const [error, setError] = useState(null); // Estado para manejar errores
+
+  useEffect(() => {
+    const obtenerProducto = async () => {
+      try {
+        const resultado = await clienteAxios.get(`productos/${idProducto}`, configHeaders);
+        console.log("Respuesta de la API:", resultado.data);
+
+        // 📌 Verifica si el producto está en la respuesta
+        if (resultado.data && resultado.data.producto) {
+          setProducto(resultado.data.producto); // Usar resultado.data.producto
+        } else {
+          setError("El producto no se encontró.");
+        }
+      } catch (err) {
+        console.error("Error al obtener el producto:", err);
+        setError("No se pudo cargar el producto.");
+      } finally {
+        setLoading(false); // Finalizar la carga, independientemente del resultado
+      }
+    };
+
+    obtenerProducto();
+  }, [idProducto]);
+
+  // 📌 Mostrar un mensaje de carga mientras se obtiene el producto
+  if (loading) return <p>Cargando...</p>;
+
+  // 📌 Mostrar un mensaje de error si ocurrió un problema
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  // 📌 Verificar si el producto está definido antes de renderizar
+  if (!producto) return <p>No se encontró el producto.</p>;
+
   return (
-    <section className="container flex flex-col lg:flex-row justify-center p-8 bg-cover bg-center error404 min-w-full min-h-screen">
-      <Card isFooterBlurred className="col-span-12 lg:col-span-7 ">
+    <section className="container flex flex-col lg:flex-row justify-center p-8 bg-cover bg-center min-w-full min-h-screen">
+      <Card isFooterBlurred className="col-span-12 lg:col-span-7">
         <CardHeader className="absolute z-10 top-1 flex-col items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">
-            Your day your way
-          </p>
-          <h4 className="text-white/90 font-medium text-xl">
-            Your checklist for better sleep
-          </h4>
+          <p className="text-tiny text-white/60 uppercase font-bold">Producto en detalle</p>
+          <h4 className="text-white/90 font-medium text-xl">{producto.nombreProducto}</h4>
         </CardHeader>
         <Image
           removeWrapper
-          alt="Relaxing app background"
-          className="z-0 w-full h-full object-cover rounded-b-none "
-          src="https://nextui.org/images/card-example-5.jpeg"
+          alt={producto.nombreProducto}
+          className="z-0 w-full h-full object-cover rounded-b-none"
+          src={producto.imagen}
         />
         <CardBody>
-          <p>Make beautiful websites regardless of your design experience.</p>
-          <p>Make beautiful websites regardless of your design experience.</p>
+          <p className="font-medium text-lg">{producto.descripcion}</p>
+          <p className="text-xl font-bold mt-2">${producto.precio}</p>
         </CardBody>
         <Divider />
         <CardFooter>
-          <Button as={Link} to="/detalleProducto" color="secondary">
+          <Button as={Link} to="/" color="secondary">
+            Volver
+          </Button>
+          <Button color="primary" className="ml-4">
             Agregar al Carrito
           </Button>
         </CardFooter>
       </Card>
-
-      {/*   <Card className="bg-[#00000087] rounded-s-none rounded-t-lg lg:rounded-l-none lg:mt-0">
-        <CardHeader className="flex gap-3">
-          <Image
-            alt="nextui logo"
-            height={40}
-            radius="sm"
-            src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-            width={40}
-          />
-          <div className="flex flex-col text-white">
-            <p className="text-md">NextUI</p>
-            <p className="text-small text-default-500">nextui.org</p>
-          </div>
-        </CardHeader>
-        <Divider />
-        <CardBody className='font-semibold text-white'>
-          <p>Make beautiful websites regardless of your design experience.</p>
-        </CardBody>
-        <Divider />
-        <CardFooter>
-          <Link
-            isExternal
-            showAnchorIcon
-            href="https://github.com/nextui-org/nextui"
-          >
-            Visit source code on GitHub.
-          </Link>
-        </CardFooter>
-      </Card> */}
     </section>
   );
 };
