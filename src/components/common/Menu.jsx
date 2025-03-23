@@ -88,7 +88,7 @@ const Menu = () => {
       >
         <Link to='/'>
           <img className="mx-auto" src={logo} alt="logo" />
-          <p className="text-center text-white font-bold text-lg">Luz Bell Mayorista</p>
+          <p className="text-center text-negroMate font-bold text-lg">Luz Bell Mayorista</p>
         </Link>
 
         <NavbarMenuItem>

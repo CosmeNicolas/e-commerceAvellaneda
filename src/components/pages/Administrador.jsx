@@ -1,19 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clienteAxios, { configHeaders, configHeadersImagen } from "../../helpers/axios";
 import { HashLoader } from "react-spinners";
 import Swal from "sweetalert2";
+import { div } from "framer-motion/client";
 
-const Administrador = ({ usuarios = [], productos = [] }) => {
-  const [tabActiva, setTabActiva] = useState("usuarios"); // Estado para manejar la pestaña activa
+const Administrador = (/* { usuarios = [], productos = [] } */) => {
+  const [tabActiva, setTabActiva] = useState("productos"); // Estado para manejar la pestaña activa
   const [show, setShow] = useState(false);
   const [usuarioInfo, setUsuarioInfo] = useState(null);
   const [productoInfo, setProductoInfo] = useState(null);
   const [imagenProducto, setImagenProducto] = useState(null);
   const [cargando, setCargando] = useState(false);
+  const [usuarios, setUsuarios] = useState([])
+  const [productos, setProductos] = useState([])
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const verUsuarios =async()=>{
+    const result = await  clienteAxios.get('/usuarios',{}, configHeaders)
+    console.log(result.data)
+    const usuarios = result.data.result
+    setUsuarios(usuarios.usuarios)
+  }
+
+  const verProductos =async()=>{
+    const result = await clienteAxios.get('/productos',{}, configHeaders)
+    console.log(result.data)
+    const productos = result.data
+    setProductos(productos.productos)
+  }
+
+  useEffect(() => {
+    verUsuarios()
+    verProductos()
+  }, [])
+  
   // =========================================================
   // Funciones para Usuarios
   // =========================================================
@@ -226,12 +248,13 @@ const Administrador = ({ usuarios = [], productos = [] }) => {
                 <HashLoader color="#3B82F6" />
               </div>
             ) : (
+              <div className="overflow-x-auto"> {/* Contenedor con scroll horizontal */}
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       ID
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Usuario
                     </th>
@@ -248,7 +271,7 @@ const Administrador = ({ usuarios = [], productos = [] }) => {
                     (usuario) =>
                       usuario._id !== JSON.parse(sessionStorage.getItem("idUsuario")) && (
                         <tr key={usuario._id}>
-                          <td className="px-6 py-4 whitespace-nowrap">{usuario._id}</td>
+                         {/*  <td className="px-6 py-4 whitespace-nowrap">{usuario._id}</td> */}
                           <td className="px-6 py-4 whitespace-nowrap">{usuario.nombreUsuario}</td>
                           <td className="px-6 py-4 whitespace-nowrap">{usuario.rol}</td>
                           <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
@@ -279,9 +302,11 @@ const Administrador = ({ usuarios = [], productos = [] }) => {
                   )}
                 </tbody>
               </table>
+              </div>
             )}
           </>
         ) : (
+          /* Productos */
           <>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Productos</h2>
             <hr className="mb-4" />
@@ -290,12 +315,13 @@ const Administrador = ({ usuarios = [], productos = [] }) => {
                 <HashLoader color="#3B82F6" />
               </div>
             ) : (
+              <div className="overflow-x-auto"> {/* Contenedor con scroll horizontal */}
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                   {/*  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       ID
-                    </th>
+                    </th> */}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Nombre
                     </th>
@@ -316,7 +342,7 @@ const Administrador = ({ usuarios = [], productos = [] }) => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {productos.map((producto) => (
                     <tr key={producto._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">{producto._id}</td>
+                      {/* <td className="px-6 py-4 whitespace-nowrap">{producto._id}</td> */}
                       <td className="px-6 py-4 whitespace-nowrap">{producto.nombreProducto}</td>
                       <td className="px-6 py-4 whitespace-nowrap">{producto.descripcion}</td>
                       <td className="px-6 py-4 whitespace-nowrap">${producto.precio}</td>
@@ -349,6 +375,7 @@ const Administrador = ({ usuarios = [], productos = [] }) => {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </>
         )}
