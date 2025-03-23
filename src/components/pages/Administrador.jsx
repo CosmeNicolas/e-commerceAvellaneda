@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import clienteAxios, { configHeaders, configHeadersImagen } from "../../helpers/axios";
 import { HashLoader } from "react-spinners";
 import Swal from "sweetalert2";
-import { div } from "framer-motion/client";
+
 
 const Administrador = (/* { usuarios = [], productos = [] } */) => {
   const [tabActiva, setTabActiva] = useState("productos"); // Estado para manejar la pestaña activa
