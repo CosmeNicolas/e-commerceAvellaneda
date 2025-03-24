@@ -2,13 +2,20 @@ import { useEffect, useState } from "react";
 import clienteAxios, { configHeaders, configHeadersImagen } from "../../helpers/axios";
 import { HashLoader } from "react-spinners";
 import Swal from "sweetalert2";
+import { FaUserPlus, FaCartPlus } from "react-icons/fa";
 
 
 const Administrador = (/* { usuarios = [], productos = [] } */) => {
-  const [tabActiva, setTabActiva] = useState("productos"); // Estado para manejar la pestaña activa
+  const [tabActiva, setTabActiva] = useState("usuarios"); // Estado para manejar la pestaña activa
   const [show, setShow] = useState(false);
+  const [showCrear, setShowCrear] = useState(false); // Modal de creación
   const [usuarioInfo, setUsuarioInfo] = useState(null);
   const [productoInfo, setProductoInfo] = useState(null);
+  const [nuevoProducto, setNuevoProducto] = useState({
+    nombreProducto: "",
+    descripcion: "",
+    precio: 0,
+  }); // Datos del nuevo producto
   const [imagenProducto, setImagenProducto] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [usuarios, setUsuarios] = useState([])
@@ -16,14 +23,20 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const handleCloseCrear = () => setShowCrear(false); // Cerrar modal de creación
+  const handleShowCrear = () => setShowCrear(true); // Abrir modal de creación
+  
+  useEffect(() => {
+    verUsuarios()
+    verProductos()
+  }, [])
 
   const verUsuarios =async()=>{
-    const result = await  clienteAxios.get('/usuarios',{}, configHeaders)
+    const result = await  clienteAxios.get('/usuarios', configHeaders)
     console.log(result.data)
     const usuarios = result.data.result
     setUsuarios(usuarios.usuarios)
   }
-
   const verProductos =async()=>{
     const result = await clienteAxios.get('/productos',{}, configHeaders)
     console.log(result.data)
@@ -31,11 +44,6 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
     setProductos(productos.productos)
   }
 
-  useEffect(() => {
-    verUsuarios()
-    verProductos()
-  }, [])
-  
   // =========================================================
   // Funciones para Usuarios
   // =========================================================
@@ -50,12 +58,23 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí, eliminar",
     });
-
+  
     if (confirmDelete.isConfirmed) {
       try {
         setCargando(true);
-        await clienteAxios.delete(`/usuarios/${idUsuario}`, configHeaders);
+  
+        // Depuración: Verifica el ID del usuario y el token
+        console.log("ID del usuario a eliminar:", idUsuario);
+        const token = JSON.parse(sessionStorage.getItem('token'));
+        console.log("Token:", token);
+  
+        // Realiza la solicitud DELETE
+        const response = await clienteAxios.delete(`/usuarios/${idUsuario}`, configHeaders);
+        console.log("Respuesta del backend:", response); // Depuración
+  
+        // Muestra mensaje de éxito y actualiza la lista de usuarios
         Swal.fire("¡Eliminado!", "El usuario ha sido eliminado.", "success");
+        await verUsuarios();
       } catch (error) {
         console.error("Error al eliminar el usuario:", error);
         Swal.fire("Error", "No se pudo eliminar el usuario.", "error");
@@ -107,6 +126,7 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
       await clienteAxios.put(`/usuarios/${usuarioInfo._id}`, usuarioInfo, configHeaders);
       Swal.fire("¡Éxito!", "Usuario actualizado correctamente.", "success");
       handleClose();
+      await verUsuarios()
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
       Swal.fire("Error", "No se pudo actualizar el usuario.", "error");
@@ -118,7 +138,52 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   // =========================================================
   // Funciones para Productos
   // =========================================================
-
+  const crearProducto = async (ev) => {
+    ev.preventDefault();
+    try {
+      setCargando(true);
+  
+      // Crear el producto
+      const result = await clienteAxios.post("/productos", nuevoProducto, configHeaders);
+  
+      // Verificar que el _id esté presente en la respuesta
+      if (!result.data._id) {
+        throw new Error("No se pudo obtener el ID del producto creado");
+      }
+  
+      // Subir la imagen si existe
+      if (imagenProducto) {
+        const formData = new FormData();
+        formData.append("imagen", imagenProducto);
+  
+        // Enviar la imagen al backend
+        const imagenResult = await clienteAxios.post(
+          `/productos/agregarImagen/${result.data._id}`, // Usar el _id del producto
+          formData,
+          configHeadersImagen
+        );
+  
+        // Si la subida de la imagen falla, eliminar el producto creado
+        if (imagenResult.status !== 200) {
+          await clienteAxios.delete(`/productos/${result.data._id}`, configHeaders);
+          throw new Error("Error al subir la imagen");
+        }
+      }
+  
+      // Mostrar mensaje de éxito
+      Swal.fire("¡Éxito!", "Producto creado correctamente.", "success");
+  
+      // Cerrar el modal y actualizar la lista de productos
+      handleCloseCrear();
+      await verProductos();
+    } catch (error) {
+      console.error("Error al crear el producto:", error);
+      Swal.fire("Error", "No se pudo crear el producto.", "error");
+    } finally {
+      setCargando(false);
+    }
+  };
+  
   const deleteProducto = async (idProducto) => {
     const confirmDelete = await Swal.fire({
       title: "¿Estás seguro?",
@@ -135,6 +200,7 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
         setCargando(true);
         await clienteAxios.delete(`/productos/${idProducto}`, configHeaders);
         Swal.fire("¡Eliminado!", "El producto ha sido eliminado.", "success");
+        await verProductos()
       } catch (error) {
         console.error("Error al eliminar el producto:", error);
         Swal.fire("Error", "No se pudo eliminar el producto.", "error");
@@ -199,6 +265,7 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
       }
       Swal.fire("¡Éxito!", "Producto actualizado correctamente.", "success");
       handleClose();
+      await verProductos()
     } catch (error) {
       console.error("Error al actualizar el producto:", error);
       Swal.fire("Error", "No se pudo actualizar el producto.", "error");
@@ -241,7 +308,12 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
       <div className="bg-white rounded-lg shadow-md p-6">
         {tabActiva === "usuarios" ? (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Usuarios</h2>
+          <div className="flex justify-between">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Usuarios</h2>
+          <button  className="bg-rosa rounded-md px-3 my-1 hover:bg-lila transition-colors duration-300"><FaUserPlus /></button>
+          </div>
+            
+            
             <hr className="mb-4" />
             {cargando ? (
               <div className="flex justify-center">
@@ -308,7 +380,10 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
         ) : (
           /* Productos */
           <>
+          <div className="flex justify-between">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Productos</h2>
+            <button onClick={handleShowCrear}  className="bg-sky-900 rounded-md px-3 my-1 hover:bg-sky-800 transition-colors duration-300"><FaCartPlus className="text-white" /></button>
+          </div>
             <hr className="mb-4" />
             {cargando ? (
               <div className="flex justify-center">
@@ -380,6 +455,78 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
           </>
         )}
       </div>
+
+        {/* Modal para crear producto */}
+      {showCrear && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-11/12 max-w-md">
+            <h2 className="text-xl font-bold mb-4">Crear Producto</h2>
+            <form onSubmit={crearProducto}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                <input
+                  type="text"
+                  name="nombreProducto"
+                  value={nuevoProducto.nombreProducto}
+                  onChange={(e) =>
+                    setNuevoProducto({ ...nuevoProducto, nombreProducto: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Descripción</label>
+                <input
+                  type="text"
+                  name="descripcion"
+                  value={nuevoProducto.descripcion}
+                  onChange={(e) =>
+                    setNuevoProducto({ ...nuevoProducto, descripcion: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Precio</label>
+                <input
+                  type="number"
+                  name="precio"
+                  value={nuevoProducto.precio}
+                  onChange={(e) =>
+                    setNuevoProducto({ ...nuevoProducto, precio: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Imagen</label>
+                <input
+                  type="file"
+                  name="imagen"
+                  onChange={(e) => setImagenProducto(e.target.files[0])}
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={handleCloseCrear}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Crear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
 
       {/* Modal para editar */}
       {show && (

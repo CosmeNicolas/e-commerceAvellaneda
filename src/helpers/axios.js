@@ -14,11 +14,17 @@ export const configHeaders = {
 
 
 /* configuracion de la cabecera para el token */
-export const configHeadersImagen= {
+/* export const configHeadersImagen= {
   headers: {
     "content-type": "multipart/form-data",
-   /*  "auth": `${token}`  // Asegúrate de que este token es válido */
+    "auth": `${token}`  // Asegúrate de que este token es válido
   }
+}; */
+export const configHeadersImagen = {
+  headers: {
+    "content-type": "multipart/form-data",
+    Authorization: `Bearer ${localStorage.getItem("token")}`, // Incluye el token si es necesario
+  },
 };
 
 export default clienteAxios
