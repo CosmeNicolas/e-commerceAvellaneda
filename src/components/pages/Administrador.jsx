@@ -10,6 +10,14 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   const [show, setShow] = useState(false);
   const [showCrear, setShowCrear] = useState(false); // Modal de creación
   const [usuarioInfo, setUsuarioInfo] = useState(null);
+  const [nuevoUsuario, setNuevoUsuario] = useState({
+    nombreUsuario: "",
+    contrasenia: "",
+    role: "usuario",
+     correo: ""
+  });
+  const [usuarios, setUsuarios] = useState([])
+
   const [productoInfo, setProductoInfo] = useState(null);
   const [nuevoProducto, setNuevoProducto] = useState({
     nombreProducto: "",
@@ -18,7 +26,6 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   }); // Datos del nuevo producto
   const [imagenProducto, setImagenProducto] = useState(null);
   const [cargando, setCargando] = useState(false);
-  const [usuarios, setUsuarios] = useState([])
   const [productos, setProductos] = useState([])
 
   const handleClose = () => setShow(false);
@@ -47,6 +54,78 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   // =========================================================
   // Funciones para Usuarios
   // =========================================================
+  // Maneja cambios en los inputs del formulario de creación
+const handleChangeNuevoUsuario = (ev) => {
+  setNuevoUsuario({ 
+    ...nuevoUsuario, 
+    [ev.target.name]: ev.target.value 
+  });
+};
+
+
+// Envía los datos del nuevo usuario al backend
+const handleCrearUsuario = async (ev) => {
+  ev.preventDefault();
+  try {
+    setCargando(true);
+    
+    // Validación básica en el frontend
+    if (!nuevoUsuario.nombreUsuario || !nuevoUsuario.correo || !nuevoUsuario.contrasenia) {
+      Swal.fire("Error", "Todos los campos son obligatorios", "error");
+      return;
+    }
+
+    if (nuevoUsuario.contrasenia.length < 6) {
+      Swal.fire("Error", "La contraseña debe tener al menos 6 caracteres", "error");
+      return;
+    }
+
+    const response = await clienteAxios.post(
+      '/usuarios',
+      {
+        nombreUsuario: nuevoUsuario.nombreUsuario,
+        correo: nuevoUsuario.correo,
+        password: nuevoUsuario.contrasenia,
+        rol: nuevoUsuario.role
+      },
+      configHeaders
+    );
+
+    if (response.data && response.data.msg) {
+      Swal.fire("¡Éxito!", response.data.msg, "success");
+    } else {
+      Swal.fire("¡Éxito!", "Usuario creado correctamente", "success");
+    }
+    
+    // Reiniciar el formulario y cerrar modal
+    setNuevoUsuario({
+      nombreUsuario: "",
+      contrasenia: "",
+      role: "usuario",
+      correo: ""
+    });
+    
+    handleCloseCrear();
+    await verUsuarios(); // Actualizar la lista de usuarios
+  } catch (error) {
+    console.error("Error al crear el usuario:", error);
+    
+    let errorMsg = "No se pudo crear el usuario";
+    if (error.response) {
+      if (error.response.data && error.response.data.msg) {
+        errorMsg = error.response.data.msg;
+      } else if (error.response.status === 409) {
+        errorMsg = "El nombre de usuario ya está en uso";
+      } else {
+        errorMsg = `Error ${error.response.status}: ${error.response.statusText}`;
+      }
+    }
+    
+    Swal.fire("Error", errorMsg, "error");
+  } finally {
+    setCargando(false);
+  }
+};
 
   const deleteUsuario = async (idUsuario) => {
     const confirmDelete = await Swal.fire({
@@ -111,7 +190,7 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   };
 
   const handlerInfoUsuario = (usuario) => {
-    setUsuarioInfo(usuario);
+    setUsuarioInfo({...usuario});
     handleShow();
   };
 
@@ -123,10 +202,14 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
     ev.preventDefault();
     try {
       setCargando(true);
-      await clienteAxios.put(`/usuarios/${usuarioInfo._id}`, usuarioInfo, configHeaders);
+      await clienteAxios.put(
+        `/usuarios/${usuarioInfo._id}`,
+        usuarioInfo,
+        configHeaders
+      );
       Swal.fire("¡Éxito!", "Usuario actualizado correctamente.", "success");
       handleClose();
-      await verUsuarios()
+      await verUsuarios(); // Actualiza la lista de usuarios
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
       Swal.fire("Error", "No se pudo actualizar el usuario.", "error");
@@ -308,198 +391,349 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
       <div className="bg-white rounded-lg shadow-md p-6">
         {tabActiva === "usuarios" ? (
           <>
-          <div className="flex justify-between">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Usuarios</h2>
-          <button  className="bg-rosa rounded-md px-3 my-1 hover:bg-lila transition-colors duration-300"><FaUserPlus /></button>
-          </div>
-            
-            
+            {/* Modal para crear usuario */}
+            {showCrear && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg w-full max-w-md">
+                  <h2 className="text-xl font-bold mb-4">
+                    Crear Nuevo Usuario
+                  </h2>
+
+                  <form onSubmit={handleCrearUsuario}>
+                    <div className="mb-4">
+                      <label className="block text-gray-700 mb-2">
+                        Nombre de Usuario
+                      </label>
+                      <input
+                        type="text"
+                        name="nombreUsuario"
+                        value={nuevoUsuario.nombreUsuario}
+                        onChange={handleChangeNuevoUsuario}
+                        className="w-full p-2 border rounded"
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-gray-700 mb-2">
+                        Correo Electrónico
+                      </label>
+                      <input
+                        type="email"
+                        name="correo"
+                        value={nuevoUsuario.correo}
+                        onChange={handleChangeNuevoUsuario}
+                        className="w-full p-2 border rounded"
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-gray-700 mb-2">
+                        Contraseña
+                      </label>
+                      <input
+                        type="password"
+                        name="contrasenia"
+                        value={nuevoUsuario.contrasenia}
+                        onChange={handleChangeNuevoUsuario}
+                        className="w-full p-2 border rounded"
+                        required
+                        minLength="6"
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-gray-700 mb-2">Rol</label>
+                      <select
+                        name="role"
+                        value={nuevoUsuario.role}
+                        onChange={handleChangeNuevoUsuario}
+                        className="w-full p-2 border rounded"
+                        required
+                      >
+                        <option value="usuario">Usuario</option>
+                        <option value="admin">Administrador</option>
+                      </select>
+                    </div>
+
+                    <div className="flex justify-end space-x-2">
+                      <button
+                        type="button"
+                        onClick={handleCloseCrear}
+                        className="bg-gray-500 text-white px-4 py-2 rounded-lg"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        className="bg-rosa text-white px-4 py-2 rounded-lg  hover:bg-fuchsia-800 transition-colors duration-300"
+                        disabled={cargando}
+                      >
+                        {cargando ? "Creando..." : "Crear Usuario"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Usuarios
+              </h2>
+              <button
+                onClick={handleShowCrear}
+                className="bg-rosa rounded-md px-3 my-1 hover:bg-lila transition-colors duration-300"
+                title="Crear nuevo usuario"
+              >
+                <FaUserPlus />
+              </button>
+            </div>
+
             <hr className="mb-4" />
             {cargando ? (
               <div className="flex justify-center">
                 <HashLoader color="#3B82F6" />
               </div>
             ) : (
-              <div className="overflow-x-auto"> {/* Contenedor con scroll horizontal */}
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <div className="overflow-x-auto">
+                {" "}
+                {/* Contenedor con scroll horizontal */}
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       ID
                     </th> */}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Usuario
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Rol
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Opciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {usuarios.map(
-                    (usuario) =>
-                      usuario._id !== JSON.parse(sessionStorage.getItem("idUsuario")) && (
-                        <tr key={usuario._id}>
-                         {/*  <td className="px-6 py-4 whitespace-nowrap">{usuario._id}</td> */}
-                          <td className="px-6 py-4 whitespace-nowrap">{usuario.nombreUsuario}</td>
-                          <td className="px-6 py-4 whitespace-nowrap">{usuario.rol}</td>
-                          <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
-                            <button
-                              onClick={() => handlerInfoUsuario(usuario)}
-                              className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
-                            >
-                              Editar
-                            </button>
-                            <button
-                              onClick={() => deleteUsuario(usuario._id)}
-                              className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                              disabled={usuario.rol === "admin"}
-                            >
-                              Eliminar
-                            </button>
-                            <button
-                              onClick={() => toggleEstadoUsuario(usuario._id, usuario.bloqueado)}
-                              className={`${
-                                usuario.bloqueado ? "bg-green-500" : "bg-gray-500"
-                              } text-white px-4 py-2 rounded-lg`}
-                            >
-                              {usuario.bloqueado ? "Habilitar" : "Bloquear"}
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                  )}
-                </tbody>
-              </table>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Usuario
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Rol
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Opciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {usuarios.map(
+                      (usuario) =>
+                        usuario._id !==
+                          JSON.parse(sessionStorage.getItem("idUsuario")) && (
+                          <tr key={usuario._id}>
+                            {/*  <td className="px-6 py-4 whitespace-nowrap">{usuario._id}</td> */}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {usuario.nombreUsuario}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {usuario.rol}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
+                              <button
+                                onClick={() => handlerInfoUsuario(usuario)}
+                                className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
+                              >
+                                Editar
+                              </button>
+                              <button
+                                onClick={() => deleteUsuario(usuario._id)}
+                                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                                disabled={usuario.rol === "admin"}
+                              >
+                                Eliminar
+                              </button>
+                              <button
+                                onClick={() =>
+                                  toggleEstadoUsuario(
+                                    usuario._id,
+                                    usuario.bloqueado
+                                  )
+                                }
+                                className={`${
+                                  usuario.bloqueado
+                                    ? "bg-slate-950-500"
+                                    : "bg-gray-500"
+                                } text-white px-4 py-2 rounded-lg`}
+                              >
+                                {usuario.bloqueado ? "Habilitar" : "Bloquear"}
+                              </button>
+                            </td>
+                          </tr>
+                        )
+                    )}
+                  </tbody>
+                </table>
               </div>
             )}
           </>
         ) : (
           /* Productos */
           <>
-          <div className="flex justify-between">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Productos</h2>
-            <button onClick={handleShowCrear}  className="bg-sky-900 rounded-md px-3 my-1 hover:bg-sky-800 transition-colors duration-300"><FaCartPlus className="text-white" /></button>
-          </div>
+            <div className="flex justify-between">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Productos
+              </h2>
+              <button
+                onClick={handleShowCrear}
+                className="bg-sky-900 rounded-md px-3 my-1 hover:bg-sky-800 transition-colors duration-300"
+              >
+                <FaCartPlus className="text-white" />
+              </button>
+            </div>
             <hr className="mb-4" />
             {cargando ? (
               <div className="flex justify-center">
                 <HashLoader color="#3B82F6" />
               </div>
             ) : (
-              <div className="overflow-x-auto"> {/* Contenedor con scroll horizontal */}
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                   {/*  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <div className="overflow-x-auto">
+                {" "}
+                {/* Contenedor con scroll horizontal */}
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {/*  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       ID
                     </th> */}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nombre
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Descripción
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Precio
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Imagen
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Opciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {productos.map((producto) => (
-                    <tr key={producto._id}>
-                      {/* <td className="px-6 py-4 whitespace-nowrap">{producto._id}</td> */}
-                      <td className="px-6 py-4 whitespace-nowrap">{producto.nombreProducto}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{producto.descripcion}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">${producto.precio}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <img src={producto.imagen} alt="producto" className="w-20 h-20 object-cover" />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
-                        <button
-                          onClick={() => handlerInfoProducto(producto)}
-                          className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => deleteProducto(producto._id)}
-                          className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                        >
-                          Eliminar
-                        </button>
-                        <button
-                          onClick={() => toggleEstadoProducto(producto._id, producto.bloqueado)}
-                          className={`${
-                            producto.bloqueado ? "bg-green-500" : "bg-gray-500"
-                          } text-white px-4 py-2 rounded-lg`}
-                        >
-                          {producto.bloqueado ? "Habilitar" : "Bloquear"}
-                        </button>
-                      </td>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nombre
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Descripción
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Precio
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Imagen
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Opciones
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {productos.map((producto) => (
+                      <tr key={producto._id}>
+                        {/* <td className="px-6 py-4 whitespace-nowrap">{producto._id}</td> */}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {producto.nombreProducto}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {producto.descripcion}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          ${producto.precio}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <img
+                            src={producto.imagen}
+                            alt="producto"
+                            className="w-20 h-20 object-cover"
+                          />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
+                          <button
+                            onClick={() => handlerInfoProducto(producto)}
+                            className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => deleteProducto(producto._id)}
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                          >
+                            Eliminar
+                          </button>
+                          <button
+                            onClick={() =>
+                              toggleEstadoProducto(
+                                producto._id,
+                                producto.bloqueado
+                              )
+                            }
+                            className={`${
+                              producto.bloqueado
+                                ? "bg-green-500"
+                                : "bg-gray-500"
+                            } text-white px-4 py-2 rounded-lg`}
+                          >
+                            {producto.bloqueado ? "Habilitar" : "Bloquear"}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </>
         )}
       </div>
 
-        {/* Modal para crear producto */}
+      {/* Modal para crear producto */}
       {showCrear && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-11/12 max-w-md">
             <h2 className="text-xl font-bold mb-4">Crear Producto</h2>
             <form onSubmit={crearProducto}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Nombre
+                </label>
                 <input
                   type="text"
                   name="nombreProducto"
                   value={nuevoProducto.nombreProducto}
                   onChange={(e) =>
-                    setNuevoProducto({ ...nuevoProducto, nombreProducto: e.target.value })
+                    setNuevoProducto({
+                      ...nuevoProducto,
+                      nombreProducto: e.target.value,
+                    })
                   }
                   className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Descripción</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Descripción
+                </label>
                 <input
                   type="text"
                   name="descripcion"
                   value={nuevoProducto.descripcion}
                   onChange={(e) =>
-                    setNuevoProducto({ ...nuevoProducto, descripcion: e.target.value })
+                    setNuevoProducto({
+                      ...nuevoProducto,
+                      descripcion: e.target.value,
+                    })
                   }
                   className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Precio</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Precio
+                </label>
                 <input
                   type="number"
                   name="precio"
                   value={nuevoProducto.precio}
                   onChange={(e) =>
-                    setNuevoProducto({ ...nuevoProducto, precio: e.target.value })
+                    setNuevoProducto({
+                      ...nuevoProducto,
+                      precio: e.target.value,
+                    })
                   }
                   className="w-full px-3 py-2 border rounded-lg"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Imagen</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Imagen
+                </label>
                 <input
                   type="file"
                   name="imagen"
@@ -527,7 +761,6 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
         </div>
       )}
 
-
       {/* Modal para editar */}
       {show && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -535,11 +768,19 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
             <h2 className="text-xl font-bold mb-4">
               {tabActiva === "usuarios" ? "Editar Usuario" : "Editar Producto"}
             </h2>
-            <form onSubmit={tabActiva === "usuarios" ? handleClickUsuarioInfo : handleClickProductoInfo}>
+            <form
+              onSubmit={
+                tabActiva === "usuarios"
+                  ? handleClickUsuarioInfo
+                  : handleClickProductoInfo
+              }
+            >
               {tabActiva === "usuarios" ? (
                 <>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Nombre
+                    </label>
                     <input
                       type="text"
                       name="nombreUsuario"
@@ -549,7 +790,9 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Rol</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Rol
+                    </label>
                     <select
                       name="rol"
                       value={usuarioInfo?.rol || ""}
@@ -564,7 +807,9 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
               ) : (
                 <>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Nombre</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Nombre
+                    </label>
                     <input
                       type="text"
                       name="nombreProducto"
@@ -574,7 +819,9 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Descripción</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Descripción
+                    </label>
                     <input
                       type="text"
                       name="descripcion"
@@ -584,7 +831,9 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Precio</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Precio
+                    </label>
                     <input
                       type="number"
                       name="precio"
@@ -594,7 +843,9 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
                     />
                   </div>
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700">Imagen</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Imagen
+                    </label>
                     <input
                       type="file"
                       name="imagen"
