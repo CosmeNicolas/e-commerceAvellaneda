@@ -2,7 +2,8 @@ import axios from 'axios'
 const  token = JSON.parse(sessionStorage.getItem('token'))
 console.log(token)
 const clienteAxios = axios.create({
-  baseURL:`${import.meta.env.VITE_URL_BACK_LOCAL}/api`
+  /* baseURL:`${import.meta.env.VITE_URL_BACK_LOCAL}/api` */
+  baseURL:`${import.meta.env.VITE_URL_BACK_LOCAL}`
 })
 /* configuracion de la cabecera para el token */
 export const configHeaders = {
