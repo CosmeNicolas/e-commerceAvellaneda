@@ -96,12 +96,16 @@ const CardProductos = () => {
   const axiosProductos = async () => {
     try {
       setLoading(true);
-      /* const resultado = await axios.get('http://localhost:3001/api/productos'); */
-      const resultado = await axios.get`${import.meta.env.VITE_URL_BACK_LOCAL}/api`;
-      console.log("Datos recibidos:", resultado.data);
-      setProductos(resultado.data.productos);
+      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}api/productos`;
+      console.log("URL de petición:", url); // Debug
+      const resultado = await axios.get(url);
+      
+      // Adapta esto según la respuesta real de tu backend
+      const productosRecibidos = resultado.data.productos || resultado.data || [];
+      setProductos(productosRecibidos);
     } catch (error) {
-      console.error("Error al obtener los productos:", error);
+      console.error("Error al obtener productos:", error);
+      setProductos([]);
     } finally {
       setLoading(false);
     }
