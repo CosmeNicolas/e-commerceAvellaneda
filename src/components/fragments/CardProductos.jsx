@@ -96,7 +96,8 @@ const CardProductos = () => {
   const axiosProductos = async () => {
     try {
       setLoading(true);
-      const resultado = await axios.get('http://localhost:3001/api/productos');
+      /* const resultado = await axios.get('http://localhost:3001/api/productos'); */
+      const resultado = await axios.get('https://back-mayorista.vercel.app/api/productos');
       console.log("Datos recibidos:", resultado.data);
       setProductos(resultado.data.productos);
     } catch (error) {
