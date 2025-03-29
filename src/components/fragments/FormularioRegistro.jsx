@@ -25,7 +25,7 @@ const FormularioRegistro = ({ idPage }) => {
     }
     if (password === rpassword) {
       try {
-        const url = `${import.meta.env.VITE_URL_BACK_LOCAL}api/usuarios`;
+        const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
         const result = await clienteAxios.post(url, {
           nombreUsuario,
           correo,
@@ -54,7 +54,7 @@ const FormularioRegistro = ({ idPage }) => {
       return;
     }
     try {
-      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}api/usuarios/login`;
+      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios/login`;
       const result = await clienteAxios.post(url, {
         nombreUsuario,
         password,

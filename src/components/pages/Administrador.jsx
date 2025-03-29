@@ -70,14 +70,26 @@ const handleCrearUsuario = async (ev) => {
   try {
     setCargando(true);
     
-    // Validación básica en el frontend
+    // Validación mejorada (igual que el backend)
     if (!nuevoUsuario.nombreUsuario || !nuevoUsuario.correo || !nuevoUsuario.contrasenia) {
       Swal.fire("Error", "Todos los campos son obligatorios", "error");
       return;
     }
 
-    if (nuevoUsuario.contrasenia.length < 6) {
-      Swal.fire("Error", "La contraseña debe tener al menos 6 caracteres", "error");
+    if (nuevoUsuario.nombreUsuario.length < 5) {
+      Swal.fire("Error", "El nombre de usuario debe tener al menos 5 caracteres", "error");
+      return;
+    }
+
+    if (nuevoUsuario.contrasenia.length < 8 || nuevoUsuario.contrasenia.length > 40) {
+      Swal.fire("Error", "La contraseña debe tener entre 8 y 40 caracteres", "error");
+      return;
+    }
+
+    // Validación adicional para correo (si el backend lo requiere)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(nuevoUsuario.correo)) {
+      Swal.fire("Error", "Ingrese un correo electrónico válido", "error");
       return;
     }
 
@@ -87,7 +99,7 @@ const handleCrearUsuario = async (ev) => {
         nombreUsuario: nuevoUsuario.nombreUsuario,
         correo: nuevoUsuario.correo,
         password: nuevoUsuario.contrasenia,
-        rol: nuevoUsuario.role
+        rol: nuevoUsuario.role || "usuario" // Valor por defecto si está vacío
       },
       configHeaders
     );
@@ -98,16 +110,16 @@ const handleCrearUsuario = async (ev) => {
       Swal.fire("¡Éxito!", "Usuario creado correctamente", "success");
     }
     
-    // Reiniciar el formulario y cerrar modal
+    // Reiniciar el formulario con valores por defecto
     setNuevoUsuario({
       nombreUsuario: "",
       contrasenia: "",
-      role: "usuario",
+      role: "usuario", // Valor por defecto
       correo: ""
     });
     
     handleCloseCrear();
-    await verUsuarios(); // Actualizar la lista de usuarios
+    await verUsuarios();
   } catch (error) {
     console.error("Error al crear el usuario:", error);
     
@@ -116,7 +128,7 @@ const handleCrearUsuario = async (ev) => {
       if (error.response.data && error.response.data.msg) {
         errorMsg = error.response.data.msg;
       } else if (error.response.status === 409) {
-        errorMsg = "El nombre de usuario ya está en uso";
+        errorMsg = "El nombre de usuario o correo ya está en uso";
       } else {
         errorMsg = `Error ${error.response.status}: ${error.response.statusText}`;
       }
