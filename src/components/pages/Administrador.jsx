@@ -39,7 +39,7 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   }, [])
 
   const verUsuarios =async()=>{
-     const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
+    const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
     const result = await  clienteAxios.get(url, configHeaders)
     console.log(result.data)
     const usuarios = result.data.result
