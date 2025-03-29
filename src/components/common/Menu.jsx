@@ -1,7 +1,7 @@
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Button, Divider } from "@nextui-org/react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from '../../img/favicon-moda.png';
+import logo from '../../img/LuzBell.svg';
 import { FaShoppingCart } from "react-icons/fa";
 
 const Menu = () => {
