@@ -96,7 +96,7 @@ const CardProductos = () => {
   const axiosProductos = async () => {
     try {
       setLoading(true);
-      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}api/productos`;
+      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/productos`;
       console.log("URL de petición:", url); // Debug
       const resultado = await axios.get(url);
       
@@ -118,7 +118,7 @@ const CardProductos = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <HashLoader color="#3B82F6" size={80} />
+        <HashLoader color="#E966A0" size={80} />
       </div>
     );
   }
