@@ -92,7 +92,7 @@ const handleCrearUsuario = async (ev) => {
       Swal.fire("Error", "Ingrese un correo electrónico válido", "error");
       return;
     }
-
+      
     const response = await clienteAxios.post(
       '/usuarios',
       {
