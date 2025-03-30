@@ -1,20 +1,18 @@
-import axios from 'axios'
+import axios from "axios";
 
+const token = JSON.parse(sessionStorage.getItem("token"));
+console.log(token);
 
-const  token = JSON.parse(sessionStorage.getItem('token'))
-console.log(token)
 const clienteAxios = axios.create({
-  baseURL:`${import.meta.env.VITE_URL_BACK_LOCAL}/api`
-})
-
-
+  baseURL: `${import.meta.env.VITE_URL_BACK_LOCAL}/api`,
+});
 
 /* configuracion de la cabecera para el token */
 export const configHeaders = {
   headers: {
     "content-type": "application/json",
-    "auth": `${token}`
-  }
+    auth: `${token}`,
+  },
 };
 
 export const configHeadersImagen = {
@@ -24,4 +22,4 @@ export const configHeadersImagen = {
   },
 };
 
-export default clienteAxios
+export default clienteAxios;

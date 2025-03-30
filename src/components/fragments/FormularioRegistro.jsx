@@ -7,6 +7,8 @@ const FormularioRegistro = ({ idPage }) => {
   const navigate = useNavigate();
   const [formRegister, setFormRegister] = useState({});
   const [formLogin, setFormLogin] = useState({});
+  const [isProcessing, setIsProcessing] = useState(false);
+
 
   const handleChangeregister = (e) => {
     setFormRegister({ ...formRegister, [e.target.name]: e.target.value });
@@ -19,57 +21,63 @@ const FormularioRegistro = ({ idPage }) => {
 
  /* Registro */
  const handleClickRegister = async (e) => {
-  e.preventDefault();
-  const { nombreUsuario, password, rpassword, correo } = formRegister;
-  
-  // Validación mejorada
-  if ([nombreUsuario, password, rpassword, correo].some(field => !field?.trim())) {
-    alert("Todos los campos son obligatorios");
-    return;
-  }
-
-  if (password !== rpassword) {
-    alert("Las contraseñas no coinciden");
-    return;
-  }
-
-  try {
-    // URL corregida (asegúrate que incluye /api/)
- 
+    e.preventDefault();
+    const { nombreUsuario, password, rpassword, correo } = formRegister;
     
-    // Petición con manejo de errores mejorado
-    const result = await clienteAxios.post(`${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`, {
-      nombreUsuario,
-      correo,
-      password,
-      rol: "usuario" // Asegúrate de incluir esto si necesitas crear admins
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (result.status === 201) {
-      alert("Registro exitoso! Redirigiendo...");
-      navigate("/login");
+    if ([nombreUsuario, password, rpassword, correo].some(field => !field?.trim())) {
+      alert("Todos los campos son obligatorios");
+      return;
     }
-  } catch (error) {
-    console.error("Error completo:", error);
-    
-    // Manejo detallado de errores
-    if (error.response) {
-      if (error.response.status === 500) {
-        alert("Error interno del servidor. El usuario se creó pero hubo un problema en la respuesta.");
+
+    if (password !== rpassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
+    setIsProcessing(true); // Activamos el estado de procesamiento
+
+    try {
+      const result = await clienteAxios.post("/usuarios", {
+        nombreUsuario,
+        correo,
+        password,
+        rol: "usuario"
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (result.status === 201) {
+        alert("Registro exitoso! Redirigiendo...");
+        // Limpiamos el formulario
+        setFormRegister({
+          nombreUsuario: "",
+          correo: "",
+          password: "",
+          rpassword: ""
+        });
+        // Forzamos recarga de la página
+        window.location.href = "/login";
+      }
+    } catch (error) {
+      console.error("Error completo:", error);
+      
+      if (error.response) {
+        if (error.response.status === 500) {
+          alert("Error interno del servidor. El usuario se creó pero hubo un problema en la respuesta.");
+        } else {
+          alert(error.response.data?.message || "Error en el registro");
+        }
+      } else if (error.request) {
+        alert("No se recibió respuesta del servidor");
       } else {
-        alert(error.response.data?.message || "Error en el registro");
+        alert("Error al configurar la petición");
       }
-    } else if (error.request) {
-      alert("No se recibió respuesta del servidor");
-    } else {
-      alert("Error al configurar la petición");
+    } finally {
+      setIsProcessing(false); // Desactivamos el estado de procesamiento
     }
-  }
-};
+  };
 
   /* Login */
   const handleClickLogin = async (e) => {
@@ -188,9 +196,12 @@ const FormularioRegistro = ({ idPage }) => {
         <button
           type="button"
           onClick={idPage === "login" ? handleClickLogin : handleClickRegister}
-          className="w-full py-3.5 px-4 bg-gradient-to-r from-rosa to-fucsia text-white font-medium rounded-xl hover:from-fucsia hover:to-rosa transition-all duration-300 shadow-lg hover:shadow-rosa/30 focus:outline-none focus:ring-2 focus:ring-rosa focus:ring-opacity-50"
+          disabled={isProcessing}
+          className={`w-full py-3.5 px-4 bg-gradient-to-r from-rosa to-fucsia text-white font-medium rounded-xl hover:from-fucsia hover:to-rosa transition-all duration-300 shadow-lg hover:shadow-rosa/30 focus:outline-none focus:ring-2 focus:ring-rosa focus:ring-opacity-50 ${
+            isProcessing ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
-          {idPage !== "login" ? "Registrarse" : "Ingresar"}
+          {isProcessing ? "Procesando..." : idPage !== "login" ? "Registrarse" : "Ingresar"}
         </button>
 
         {/* Enlace alternativo */}

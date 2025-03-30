@@ -12,8 +12,8 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   const [usuarioInfo, setUsuarioInfo] = useState(null);
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombreUsuario: "",
-    contrasenia: "",
-    role: "usuario",
+    password: "",
+    rol: "usuario",
      correo: ""
   });
   const [usuarios, setUsuarios] = useState([])
@@ -34,22 +34,37 @@ const Administrador = (/* { usuarios = [], productos = [] } */) => {
   const handleShowCrear = () => setShowCrear(true); // Abrir modal de creación
   
   useEffect(() => {
-    verUsuarios()
     verProductos()
+    verUsuarios()
   }, [])
 
   const verUsuarios =async()=>{
-    const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
-    const result = await clienteAxios.get(url, configHeaders)
-    console.log(result.data)
-    const usuarios = result.data.result
-    setUsuarios(usuarios.usuarios)
+    try {
+      setCargando(true);
+      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
+      const result = await clienteAxios.get(url, configHeaders)
+      console.log(result.data)
+      const usuarios = result.data.result
+      setUsuarios(usuarios.usuarios)
+    } catch (error) {
+      console.error(error)
+    }finally{
+      setCargando(false);
+    }
+   
   }
   const verProductos =async()=>{
-    const result = await clienteAxios.get('/productos',{}, configHeaders)
-    console.log(result.data)
-    const productos = result.data
-    setProductos(productos.productos)
+    try {
+      setCargando(true)
+      const result = await clienteAxios.get('/productos',{}, configHeaders)
+      console.log(result.data)
+      const productos = result.data
+      setProductos(productos.productos)
+    } catch (error) {
+      console.log(error)
+    }finally{
+      setCargando(false)
+    }
   }
 
   // =========================================================
@@ -65,13 +80,13 @@ const handleChangeNuevoUsuario = (ev) => {
 
 
 // Envía los datos del nuevo usuario al backend
-const handleCrearUsuario = async (ev) => {
+const handleCrearUsuario = async(ev) => {
   ev.preventDefault();
   try {
     setCargando(true);
     
     // Validación mejorada (igual que el backend)
-    if (!nuevoUsuario.nombreUsuario || !nuevoUsuario.correo || !nuevoUsuario.contrasenia) {
+    if (!nuevoUsuario.nombreUsuario || !nuevoUsuario.correo || !nuevoUsuario.password) {
       Swal.fire("Error", "Todos los campos son obligatorios", "error");
       return;
     }
@@ -81,7 +96,7 @@ const handleCrearUsuario = async (ev) => {
       return;
     }
 
-    if (nuevoUsuario.contrasenia.length < 8 || nuevoUsuario.contrasenia.length > 40) {
+    if (nuevoUsuario.password.length < 8 || nuevoUsuario.password.length > 40) {
       Swal.fire("Error", "La contraseña debe tener entre 8 y 40 caracteres", "error");
       return;
     }
@@ -93,16 +108,12 @@ const handleCrearUsuario = async (ev) => {
       return;
     }
       
-    const response = await clienteAxios.post(
-      '/usuarios',
-      {
-        nombreUsuario: nuevoUsuario.nombreUsuario,
-        correo: nuevoUsuario.correo,
-        password: nuevoUsuario.contrasenia,
-        rol: nuevoUsuario.role || "usuario" // Valor por defecto si está vacío
-      },
-      configHeaders
-    );
+    const response = await clienteAxios.post("/usuarios", {
+      nombreUsuario: nuevoUsuario.nombreUsuario,
+      correo: nuevoUsuario.correo,
+      password: nuevoUsuario.password,
+      rol: nuevoUsuario.rol || "usuario", // Valor por defecto si está vacío
+    });
 
     if (response.data && response.data.msg) {
       Swal.fire("¡Éxito!", response.data.msg, "success");
@@ -113,8 +124,8 @@ const handleCrearUsuario = async (ev) => {
     // Reiniciar el formulario con valores por defecto
     setNuevoUsuario({
       nombreUsuario: "",
-      contrasenia: "",
-      role: "usuario", // Valor por defecto
+      password: "",
+      rol: "usuario", // Valor por defecto
       correo: ""
     });
     
@@ -122,18 +133,6 @@ const handleCrearUsuario = async (ev) => {
     await verUsuarios();
   } catch (error) {
     console.error("Error al crear el usuario:", error);
-    
-    let errorMsg = "No se pudo crear el usuario";
-    if (error.response) {
-      if (error.response.data && error.response.data.msg) {
-        errorMsg = error.response.data.msg;
-      } else if (error.response.status === 409) {
-        errorMsg = "El nombre de usuario o correo ya está en uso";
-      } else {
-        errorMsg = `Error ${error.response.status}: ${error.response.statusText}`;
-      }
-    }
-    
     Swal.fire("Error", errorMsg, "error");
   } finally {
     setCargando(false);
@@ -447,8 +446,8 @@ const handleCrearUsuario = async (ev) => {
                       </label>
                       <input
                         type="password"
-                        name="contrasenia"
-                        value={nuevoUsuario.contrasenia}
+                        name="password"
+                        value={nuevoUsuario.password}
                         onChange={handleChangeNuevoUsuario}
                         className="w-full p-2 border rounded"
                         required
@@ -459,8 +458,8 @@ const handleCrearUsuario = async (ev) => {
                     <div className="mb-4">
                       <label className="block text-gray-700 mb-2">Rol</label>
                       <select
-                        name="role"
-                        value={nuevoUsuario.role}
+                        name="rol"
+                        value={nuevoUsuario.rol}
                         onChange={handleChangeNuevoUsuario}
                         className="w-full p-2 border rounded"
                         required
