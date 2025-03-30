@@ -506,7 +506,7 @@ const handleCrearUsuario = async(ev) => {
             <hr className="mb-4" />
             {cargando ? (
               <div className="flex justify-center">
-                <HashLoader color="#3B82F6" />
+                <HashLoader color="#E966A0" />
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -597,7 +597,7 @@ const handleCrearUsuario = async(ev) => {
             <hr className="mb-4" />
             {cargando ? (
               <div className="flex justify-center">
-                <HashLoader color="#3B82F6" />
+                <HashLoader color="#E966A0" />
               </div>
             ) : (
               <div className="overflow-x-auto">
