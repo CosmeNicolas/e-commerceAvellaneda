@@ -22,6 +22,8 @@
 
 
 .fondo{
-    background-image: url(/src/img/3.png)
+    background-image: url(/src/img/3.png) ;
+    background-color: #FAF1E6;
+    
   }
   

@@ -3,6 +3,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import ropa2 from "../../img/2.png";
+import { FaRegHeart } from "react-icons/fa6";
 
 const Contacto = () => {
   const cardVariants = {
@@ -15,10 +16,13 @@ const Contacto = () => {
       {/* Fondo sólido en lugar de imagen */}
       {/* Título centrado con márgenes seguros */}
       <div className="flex justify-center items-center p-4">
-        <div className="bg-gray-300 dark:bg-gray-600 rounded-lg px-6 py-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-white">
-            ¡Gracias por elegirnos! 🛍️
+        <div className="bg-blanco dark:bg-gray-600 rounded-lg px-6 py-4 flex ">
+        
+          <h1 className="text-3xl md:text-4xl text-center text-gray-800 dark:text-white font-">
+            ¡Gracias por elegirnos!🩷 
           </h1>
+         
+      
         </div>
       </div>
 
@@ -71,7 +75,7 @@ const Contacto = () => {
                   <input
                     id="firstName"
                     type="text"
-                    className="block w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-lila rounded-lg focus:border-fucsia focus:ring-2 focus:ring-rosa focus:ring-opacity-50 focus:outline-none transition-all"
+                    className="block w-full px-4 py-3 mt-2 text-gray-800 bg-white border  rounded-lg focus:border-fucsia focus:ring-2 focus:ring-rosa focus:ring-opacity-50 focus:outline-none transition-all"
                   />
                 </div>
 
@@ -85,7 +89,7 @@ const Contacto = () => {
                   <input
                     id="lastName"
                     type="text"
-                    className="block w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-lila rounded-lg focus:border-fucsia focus:ring-2 focus:ring-rosa focus:ring-opacity-50 focus:outline-none transition-all"
+                    className="block w-full px-4 py-3 mt-2 text-gray-800 bg-white border  rounded-lg focus:border-fucsia focus:ring-2 focus:ring-rosa focus:ring-opacity-50 focus:outline-none transition-all"
                   />
                 </div>
 
@@ -99,7 +103,7 @@ const Contacto = () => {
                   <input
                     id="email"
                     type="email"
-                    className="block w-full px-4 py-3 mt-2 text-gray-800 bg-white border border-lila rounded-lg focus:border-fucsia focus:ring-2 focus:ring-rosa focus:ring-opacity-50 focus:outline-none transition-all"
+                    className="block w-full px-4 py-3 mt-2 text-gray-800 bg-white border  rounded-lg focus:border-fucsia focus:ring-2 focus:ring-rosa focus:ring-opacity-50 focus:outline-none transition-all"
                   />
                 </div>
 

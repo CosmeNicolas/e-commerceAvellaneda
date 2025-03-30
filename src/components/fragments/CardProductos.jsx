@@ -1,91 +1,6 @@
-/* import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import axios from 'axios';
-import HashLoader from "react-spinners/HashLoader";
-
-const CardProductos = () => {
-  const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado para controlar el loading
-
-  const axiosProductos = async () => {
-    try {
-      setLoading(true); // Activar loading al iniciar la petición
-      const resultado = await axios.get('http://localhost:3001/api/productos');
-      console.log("Datos recibidos:", resultado.data);
-      setProductos(resultado.data.productos);
-    } catch (error) {
-      console.error("Error al obtener los productos:", error);
-    } finally {
-      setLoading(false); // Desactivar loading cuando termine la petición
-    }
-  };
-
-  useEffect(() => {
-    axiosProductos();
-  }, []);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 100 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  const [ref1, inView1] = useInView({ triggerOnce: true, threshold: 0.2 });
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <HashLoader color="#3B82F6" size={80} />
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto flex justify-center min-h-screen px-4 bg-cover bg-center">
-      <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {productos.map((producto) => (
-          <motion.div
-            key={producto._id}
-            ref={ref1}
-            initial="hidden"
-            animate={inView1 ? "visible" : "hidden"}
-            variants={cardVariants}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-          >
-            <Card className="p-2 h-[350px] sm:h-[400px] lg:h-[450px] m-2" shadow="sm" isPressable>
-              <CardBody className="overflow-visible p-0">
-                <Image
-                  shadow="sm"
-                  radius="lg"
-                  width="100%"
-                  alt={producto.nombreProducto}
-                  className="w-full object-cover h-[140px]"
-                  src={producto.imagen}
-                />
-                <p className="mt-2">{producto.descripcion}</p>
-              </CardBody>
-              <CardFooter className="text-small justify-between">
-                <b>{producto.nombreProducto}</b>
-                <p className="text-default-500">${producto.precio}</p>
-                <Button as={Link} to={`/detalleProducto/${producto._id}`} color="secondary">
-                  Ver Detalles
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default CardProductos; */
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import HashLoader from "react-spinners/HashLoader";
 
@@ -97,10 +12,7 @@ const CardProductos = () => {
     try {
       setLoading(true);
       const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/productos`;
-      console.log("URL de petición:", url); // Debug
       const resultado = await axios.get(url);
-      
-      // Adapta esto según la respuesta real de tu backend
       const productosRecibidos = resultado.data.productos || resultado.data || [];
       setProductos(productosRecibidos);
     } catch (error) {
@@ -124,31 +36,50 @@ const CardProductos = () => {
   }
 
   return (
-    <div className="container mx-auto flex justify-center min-h-screen px-4 bg-cover bg-center">
-      <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="container mx-auto px-4 py-12 ">
+      <div className="gap-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {productos.map((producto) => (
-          <div key={producto._id}>
-            <Card className="p-2 h-[350px] sm:h-[400px] lg:h-[450px] m-2" shadow="sm" isPressable>
-              <CardBody className="overflow-visible p-0">
-                <Image
-                  shadow="sm"
-                  radius="lg"
-                  width="100%"
-                  alt={producto.nombreProducto}
-                  className="w-full object-cover h-[140px]"
+          <motion.div
+            key={producto._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.03 }}
+          >
+            <div className="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col group">
+              {/* Imagen del producto */}
+              <div className="relative overflow-hidden h-48">
+                <img
                   src={producto.imagen}
+                  alt={producto.nombreProducto}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <p className="mt-2">{producto.descripcion}</p>
-              </CardBody>
-              <CardFooter className="text-small justify-between">
-                <b>{producto.nombreProducto}</b>
-                <p className="text-default-500">${producto.precio}</p>
-                <Button as={Link} to={`/detalleProducto/${producto._id}`} color="secondary">
-                  Ver Detalles
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
+                {/* Overlay sutil */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+              </div>
+
+              {/* Contenido de la card */}
+              <div className="p-5 flex-grow flex flex-col">
+                <h3 className="text-xl font-bold text-gray-800 group-hover:text-rosa transition-colors">
+                  {producto.nombreProducto}
+                </h3>
+                <p className="text-gray-600 mt-2 line-clamp-2 flex-grow">
+                  {producto.descripcion}
+                </p>
+
+                {/* Precio y botón */}
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-2xl font-bold text-fucsia">${producto.precio}</span>
+                  <Link
+                    to={`/detalleProducto/${producto._id}`}
+                    className="px-4 py-2 bg-gradient-to-r from-rosa to-fucsia text-white rounded-lg hover:from-fucsia hover:to-rosa transition-all duration-300 shadow hover:shadow-md"
+                  >
+                    Ver detalles
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         ))}
       </div>
     </div>
