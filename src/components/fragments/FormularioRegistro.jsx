@@ -21,63 +21,86 @@ const FormularioRegistro = ({ idPage }) => {
 
  /* Registro */
  const handleClickRegister = async (e) => {
-    e.preventDefault();
-    const { nombreUsuario, password, rpassword, correo } = formRegister;
-    
-    if ([nombreUsuario, password, rpassword, correo].some(field => !field?.trim())) {
-      alert("Todos los campos son obligatorios");
-      return;
-    }
+  e.preventDefault();
+  setIsProcessing(true); // Mover al inicio para activar loading inmediatamente
+  
+  const { nombreUsuario, password, rpassword, correo } = formRegister;
+  
+  // Validaciones mejoradas
+  if (!nombreUsuario?.trim() || !password?.trim() || !rpassword?.trim() || !correo?.trim()) {
+    alert("Todos los campos son obligatorios");
+    setIsProcessing(false);
+    return;
+  }
 
-    if (password !== rpassword) {
-      alert("Las contraseñas no coinciden");
-      return;
-    }
+  if (password !== rpassword) {
+    alert("Las contraseñas no coinciden");
+    setIsProcessing(false);
+    return;
+  }
 
-    setIsProcessing(true); // Activamos el estado de procesamiento
+  // Validación de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(correo)) {
+    alert("Por favor ingresa un correo electrónico válido");
+    setIsProcessing(false);
+    return;
+  }
 
-    try {
-      const result = await clienteAxios.post("/usuarios", {
-        nombreUsuario,
-        correo,
-        password,
+  try {
+    const response = await clienteAxios.post(
+      "/usuarios", 
+      {
+        nombreUsuario: nombreUsuario.trim(),
+        correo: correo.trim(),
+        password: password.trim(),
         rol: "usuario"
-      }, {
+      },
+      {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
-      });
+      }
+    );
 
-      if (result.status === 201) {
-        alert("Registro exitoso! Redirigiendo...");
-        // Limpiamos el formulario
-        setFormRegister({
-          nombreUsuario: "",
-          correo: "",
-          password: "",
-          rpassword: ""
-        });
-        // Forzamos recarga de la página
-        window.location.href = "/login";
-      }
-    } catch (error) {
-      console.error("Error completo:", error);
+    if (response.status === 201) {
+      alert(response.data?.msg || "Registro exitoso! Redirigiendo...");
       
-      if (error.response) {
-        if (error.response.status === 500) {
-          alert("Error interno del servidor. El usuario se creó pero hubo un problema en la respuesta.");
-        } else {
-          alert(error.response.data?.message || "Error en el registro");
-        }
-      } else if (error.request) {
-        alert("No se recibió respuesta del servidor");
-      } else {
-        alert("Error al configurar la petición");
-      }
-    } finally {
-      setIsProcessing(false); // Desactivamos el estado de procesamiento
+      // Limpiar formulario
+      setFormRegister({
+        nombreUsuario: "",
+        correo: "",
+        password: "",
+        rpassword: ""
+      });
+      
+      // Redirección más limpia (evita recarga completa)
+      navigate("/login", { replace: true });
     }
-  };
+  } catch (error) {
+    console.error("Error detallado:", error);
+    
+    // Manejo de errores mejorado
+    let errorMessage = "Error al registrar";
+    
+    if (error.response) {
+      if (error.response.data?.msg) {
+        errorMessage = error.response.data.msg;
+      } else if (error.response.status === 500) {
+        errorMessage = "El usuario se creó pero hubo un error en la respuesta del servidor";
+      }
+    } else if (error.request) {
+      errorMessage = "El servidor no respondió. Verifica tu conexión";
+    }
+    
+    alert(errorMessage);
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
+   
 
   /* Login */
   const handleClickLogin = async (e) => {
