@@ -42,7 +42,7 @@ const FormularioRegistro = ({ idPage }) => {
       nombreUsuario,
       correo,
       password,
-      rol: "admin" // Asegúrate de incluir esto si necesitas crear admins
+      rol: "usuario" // Asegúrate de incluir esto si necesitas crear admins
     }, {
       headers: {
         'Content-Type': 'application/json'
