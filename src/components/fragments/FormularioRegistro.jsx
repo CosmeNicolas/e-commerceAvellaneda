@@ -35,10 +35,10 @@ const FormularioRegistro = ({ idPage }) => {
 
   try {
     // URL corregida (asegúrate que incluye /api/)
-    const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios/`;
+ 
     
     // Petición con manejo de errores mejorado
-    const result = await clienteAxios.post(url, {
+    const result = await clienteAxios.post(`${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`, {
       nombreUsuario,
       correo,
       password,
@@ -80,11 +80,10 @@ const FormularioRegistro = ({ idPage }) => {
       return;
     }
     try {
-      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
-      const result = await clienteAxios.post(url, {
+      const result = await clienteAxios.post('/usuarios/login', {
         nombreUsuario,
-        password,
-      });
+        password
+      }, configHeaders);
       if (result.status === 200) {
         alert(`${result.data.msg}`);
         sessionStorage.setItem("token", JSON.stringify(result.data.token));
