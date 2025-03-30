@@ -80,7 +80,7 @@ const FormularioRegistro = ({ idPage }) => {
       return;
     }
     try {
-      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/usuarios`;
+      const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/usuarios`;
       const result = await clienteAxios.post(url, {
         nombreUsuario,
         password,
