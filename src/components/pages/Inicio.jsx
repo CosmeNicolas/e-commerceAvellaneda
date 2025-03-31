@@ -77,7 +77,6 @@ const Inicio = () => {
         <h2 className="text-negroMate text-2xl md:text-3xl font-bold mb-4">Productos Destacados</h2>
         <CardProductos />
       </div>
-      <WhatsAppButton />
     </div>
     
   );
