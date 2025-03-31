@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@heroui/drawer": "^2.2.13",
+    "@mercadopago/sdk-react": "^0.0.24",
     "@nextui-org/react": "^2.4.6",
     "axios": "^1.8.4",
     "framer-motion": "^11.5.4",

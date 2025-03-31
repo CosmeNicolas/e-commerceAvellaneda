@@ -27,7 +27,8 @@ const Menu = () => {
     { path: '/', name: 'Inicio' },
     { path: '/productos', name: 'Productos' },
     { path: '/contacto', name: 'Contacto' },
-    { path: '/carrito', name: <FaShoppingCart />, icon: true }
+    /* { path: '/carrito', name: <FaShoppingCart />, icon: true }, */
+    { path: '/error404', name: <FaShoppingCart />, icon: true }
   ];
 
   const authItems = [
