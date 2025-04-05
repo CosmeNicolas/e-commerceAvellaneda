@@ -22,4 +22,7 @@ export const configHeadersImagen = {
   },
 };
 
+
+
+
 export default clienteAxios;
