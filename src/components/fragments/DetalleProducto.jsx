@@ -9,6 +9,36 @@ const DetalleProducto = () => {
   const [loading, setLoading] = useState(true); // Estado para manejar la carga
   const [error, setError] = useState(null); // Estado para manejar errores
 
+  const handlePagar = async () => {
+    try {
+      const response = await clienteAxios.post(
+        "/pagos/crear-pago",
+        {
+          userId: "test_user_123", // o el ID real del usuario si tienes autenticación
+          items: [
+            {
+              nombre: producto.nombreProducto,
+              precio: producto.precio,
+              cantidad: 1
+            }
+          ]
+        },
+        configHeaders
+      );
+  
+      const { id } = response.data;
+  
+      if (id) {
+        // Redireccionar a la pasarela de pago de Mercado Pago
+        window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${id}`;
+      } else {
+        console.error("No se recibió un ID de preferencia de pago.");
+      }
+    } catch (error) {
+      console.error("Error al procesar el pago:", error);
+    }
+  };
+
   useEffect(() => {
     const obtenerProducto = async () => {
       try {
@@ -63,8 +93,8 @@ const DetalleProducto = () => {
           <Button as={Link} to="/" color="secondary">
             Volver
           </Button>
-          <Button color="primary" className="ml-4">
-            Agregar al Carrito
+          <Button color="primary" className="ml-4" onClick={handlePagar}>
+           Comprar ahora 
           </Button>
         </CardFooter>
       </Card>
