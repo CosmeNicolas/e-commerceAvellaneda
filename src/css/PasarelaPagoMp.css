@@ -1,0 +1,27 @@
+/* src/components/common/PasarelaPagoMp.css */
+.mercadoPagoButton {
+  background-color: #004aad; /* Azul de Mercado Pago */
+  color: #fff;
+  font-size: 16px;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 300px; /* Ancho máximo para el botón */
+  margin: 0 auto;
+  display: block;
+}
+
+.mercadoPagoButton:hover {
+  background-color: #0066cc; /* Azul oscuro de Mercado Pago */
+}
+
+.mercadoPagoButton:active {
+  background-color: #003b73; /* Azul más oscuro */
+}
+
+.mercadoPagoButton:focus {
+  outline: none;
+}
