@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from '../../img/LuzBell.svg';
-import { FaShoppingCart } from "react-icons/fa";
+/* import { FaShoppingCart } from "react-icons/fa"; */
 
 const Menu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,7 +28,7 @@ const Menu = () => {
     { path: '/productos', name: 'Productos' },
     { path: '/contacto', name: 'Contacto' },
     /* { path: '/carrito', name: <FaShoppingCart />, icon: true }, */
-    { path: '/error404', name: <FaShoppingCart />, icon: true }
+    { path: '/error404',  name:"🛒" , icon: true }
   ];
 
   const authItems = [
