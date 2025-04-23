@@ -46,7 +46,7 @@ const Carousel = () => {
   const promotions = [
     {
       title: "20% OFF en Camperas",
-      subtitle: "Colección Premium Otoño/Invierno 2023",
+      subtitle: "Colección Premium Otoño/Invierno 2025",
       bgColor: "bg-negroMate",
       textColor: "text-rosa",
       highlightColor: "text-lila",
