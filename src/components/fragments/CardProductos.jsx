@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import {useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import HashLoader from "react-spinners/HashLoader";
+
 
 const CardProductos = () => {
   const [productos, setProductos] = useState([]);
