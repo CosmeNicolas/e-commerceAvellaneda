@@ -1,11 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "./index.css";
-import Inicio from "./components/pages/Inicio";
-import Menu from "./components/common/Menu";
-import Footer from "./components/common/Footer";
-import Error404 from "./components/pages/Error404";
-import DetalleProducto from "./components/fragments/DetalleProducto";
-import Contacto from "./components/pages/Contacto";
+import { BrowserRouter as Router } from "react-router-dom";
+import RoutesViews from "./routes/RoutesViews";
+import RoutesViews from "./routes/RoutesViews";
+
 function App() {
   return (
     <BrowserRouter>
