@@ -9,7 +9,7 @@ import Contacto from "./components/pages/Contacto";
 function App() {
   return (
     <BrowserRouter>
-      <div className="relative flex flex-col min-h-screen">
+      <div className="relative flex flex-col min-h-screen ">
         <Menu />
         <div className="flex-grow">
           <Routes>
