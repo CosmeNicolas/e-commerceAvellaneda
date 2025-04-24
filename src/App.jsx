@@ -1,6 +1,6 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import RoutesViews from "./routes/RoutesViews";
-import RoutesViews from "./routes/RoutesViews";
+
 
 function App() {
   return (
