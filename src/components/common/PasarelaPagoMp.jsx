@@ -1,8 +1,11 @@
 // src/components/common/PasarelaPagoMp.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@nextui-org/react";
 import clienteAxios, { configHeaders } from "../../helpers/axios";
 import "../../css/PasarelaPagoMp.css";
+
+
+
 const PasarelaPagoMp = ({ producto }) => {
   const [preferenceId, setPreferenceId] = useState(null); // Estado para almacenar el preference_id de Mercado Pago
 
