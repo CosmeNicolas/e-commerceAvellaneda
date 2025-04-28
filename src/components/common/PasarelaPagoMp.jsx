@@ -1,8 +1,9 @@
 // src/components/common/PasarelaPagoMp.jsx
 import React, { useState, useEffect } from "react";
-import { Button } from "@nextui-org/react";
 import clienteAxios, { configHeaders } from "../../helpers/axios";
 import "../../css/PasarelaPagoMp.css";
+import mpLogo from "../../img/mercadopagoLogo.svg"
+
 const PasarelaPagoMp = ({ producto }) => {
   const [preferenceId, setPreferenceId] = useState(null); // Estado para almacenar el preference_id de Mercado Pago
 
@@ -11,13 +12,13 @@ const PasarelaPagoMp = ({ producto }) => {
     const crearPreferencia = async () => {
       try {
         const response = await clienteAxios.post(
-          "/pagos/crear-pago", // Endpoint donde se crea la preferencia
+          "/pagos/crear-pago",
           {
-            userId: "test_user_123", // ID del usuario (si tienes autenticación, pon aquí el ID real)
+            userId: "test_user_123",
             items: [
               {
                 nombre: producto.nombreProducto,
-                precio: producto.precio,
+                precio: Number(producto.precio),
                 cantidad: 1
               }
             ]
@@ -25,9 +26,9 @@ const PasarelaPagoMp = ({ producto }) => {
           configHeaders
         );
 
-        const { id } = response.data; // Obtenemos el ID de la preferencia
+        const { id } = response.data;
         if (id) {
-          setPreferenceId(id); // Establecemos el ID de la preferencia
+          setPreferenceId(id);
         } else {
           console.error("No se recibió un ID de preferencia de pago.");
         }
@@ -37,13 +38,12 @@ const PasarelaPagoMp = ({ producto }) => {
     };
 
     if (producto) {
-      crearPreferencia(); // Solo crear la preferencia si tenemos un producto
+      crearPreferencia();
     }
   }, [producto]);
 
   const handlePagar = () => {
     if (preferenceId) {
-      // Redirige al usuario a la pasarela de pago de Mercado Pago
       window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?preference_id=${preferenceId}`;
     } else {
       console.error("No se pudo obtener el ID de la preferencia.");
@@ -51,13 +51,28 @@ const PasarelaPagoMp = ({ producto }) => {
   };
 
   return (
-    <div>
+    <div className="flex justify-center items-center">
       {preferenceId ? (
-        <Button className="mercadoPagoButton" color="primary" onClick={handlePagar}>
-          Comprar ahora
-        </Button>
+       <div className="flex justify-center items-center">
+       {preferenceId ? (
+         <button
+           onClick={handlePagar}
+           className="flex items-center gap-3 bg-[#009EE3] hover:bg-[#00B4FF] text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-md transform transition-transform hover:-translate-y-1 hover:shadow-lg"
+         >
+           <img
+             src={mpLogo}
+             alt="Mercado Pago"
+             className="w-14 h-10"
+           />
+           <span className="text-sm md:text-base">Pagar con Mercado Pago</span>
+         </button>
+       ) : (
+         <p className="text-center text-gray-500">Cargando la pasarela de pago...</p>
+       )}
+     </div>
+     
       ) : (
-        <p>Cargando la pasarela de pago...</p>
+        <p className="text-center text-gray-500">Cargando la pasarela de pago...</p>
       )}
     </div>
   );
