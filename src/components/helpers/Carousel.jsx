@@ -142,7 +142,7 @@ const Carousel = () => {
       </Slider>
 
       {/* Custom dots styling */}
-      <style jsx>{`
+      <style >{`
         :global(.slick-dots) {
           bottom: 12px !important;
         }
