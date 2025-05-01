@@ -22,7 +22,6 @@ const VistaUsuarios = () => {
     try {
       setCargando(true);
       const result = await clienteAxios.get("/usuarios", configHeaders);
-  
       const usuariosObtenidos = result?.data?.result?.usuarios || [];
       setUsuarios(usuariosObtenidos);
     } catch (error) {
@@ -32,7 +31,6 @@ const VistaUsuarios = () => {
       setCargando(false);
     }
   };
-  
 
   useEffect(() => {
     verUsuarios();
@@ -46,7 +44,6 @@ const VistaUsuarios = () => {
     e.preventDefault();
     try {
       setCargando(true);
-
       const { nombreUsuario, correo, password } = nuevoUsuario;
 
       if (!nombreUsuario || !correo || !password) {
@@ -141,115 +138,8 @@ const VistaUsuarios = () => {
   };
 
   return (
-    <div>
-      {/* Crear Usuario */}
-      {showCrear && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Crear Usuario</h2>
-            <form onSubmit={handleCrearUsuario}>
-              <input
-                className="w-full border p-2 rounded mb-3"
-                type="text"
-                name="nombreUsuario"
-                placeholder="Nombre de usuario"
-                value={nuevoUsuario.nombreUsuario}
-                onChange={handleChangeNuevoUsuario}
-              />
-              <input
-                className="w-full border p-2 rounded mb-3"
-                type="email"
-                name="correo"
-                placeholder="Correo"
-                value={nuevoUsuario.correo}
-                onChange={handleChangeNuevoUsuario}
-              />
-              <input
-                className="w-full border p-2 rounded mb-3"
-                type="password"
-                name="password"
-                placeholder="Contraseña"
-                value={nuevoUsuario.password}
-                onChange={handleChangeNuevoUsuario}
-              />
-              <select
-                className="w-full border p-2 rounded mb-4"
-                name="rol"
-                value={nuevoUsuario.rol}
-                onChange={handleChangeNuevoUsuario}
-              >
-                <option value="usuario">Usuario</option>
-                <option value="admin">Administrador</option>
-              </select>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowCrear(false)}
-                  className="px-4 py-2 bg-gray-400 text-white rounded"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Crear
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Editar Usuario */}
-      {showEditar && usuarioEdit && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
-            <form onSubmit={handleEditarUsuario}>
-              <input
-                className="w-full border p-2 rounded mb-3"
-                type="text"
-                name="nombreUsuario"
-                value={usuarioEdit.nombreUsuario}
-                onChange={(e) =>
-                  setUsuarioEdit({ ...usuarioEdit, nombreUsuario: e.target.value })
-                }
-              />
-              <select
-                className="w-full border p-2 rounded mb-4"
-                name="rol"
-                value={usuarioEdit.rol}
-                onChange={(e) =>
-                  setUsuarioEdit({ ...usuarioEdit, rol: e.target.value })
-                }
-              >
-                <option value="usuario">Usuario</option>
-                <option value="admin">Administrador</option>
-              </select>
-
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEditar(false)}
-                  className="px-4 py-2 bg-gray-400 text-white rounded"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      <div className="flex justify-between items-center mb-4">
+    <div className="overflow-x-auto">
+      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
         <h2 className="text-xl font-bold text-gray-800">Usuarios</h2>
         <button
           onClick={() => setShowCrear(true)}
@@ -260,54 +150,57 @@ const VistaUsuarios = () => {
       </div>
 
       {cargando ? (
-        <div className="flex justify-center"><HashLoader color="#E966A0" /></div>
+        <div className="flex justify-center">
+          <HashLoader color="#E966A0" />
+        </div>
       ) : (
-        <table className="w-full table-auto text-left border border-gray-200">
-          <thead className="bg-gray-100 text-sm text-gray-600 uppercase">
-            <tr>
-              <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Rol</th>
-              <th className="px-4 py-2">Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map(
-              (u) =>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto text-left border border-gray-200">
+            <thead className="bg-gray-100 text-sm text-gray-600 uppercase">
+              <tr>
+                <th className="px-4 py-2">Usuario</th>
+                <th className="px-4 py-2">Rol</th>
+                <th className="px-4 py-2">Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usuarios.map((u) => (
                 u._id !== JSON.parse(sessionStorage.getItem("idUsuario")) && (
                   <tr key={u._id} className="border-t text-gray-700">
                     <td className="px-4 py-2">{u.nombreUsuario}</td>
                     <td className="px-4 py-2">{u.rol}</td>
-                    <td className="px-4 py-2 space-x-2">
-                      <button
-                        className="bg-yellow-500 text-white px-3 py-1 rounded"
-                        onClick={() => {
-                          setUsuarioEdit(u);
-                          setShowEditar(true);
-                        }}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="bg-red-500 text-white px-3 py-1 rounded"
-                        onClick={() => deleteUsuario(u._id)}
-                        disabled={u.rol === "admin"}
-                      >
-                        Eliminar
-                      </button>
-                      <button
-                        className={`${
-                          u.bloqueado ? "bg-green-500" : "bg-gray-500"
-                        } text-white px-3 py-1 rounded`}
-                        onClick={() => toggleEstadoUsuario(u._id, u.bloqueado)}
-                      >
-                        {u.bloqueado ? "Habilitar" : "Bloquear"}
-                      </button>
+                    <td className="px-4 py-2">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          className="bg-yellow-500 text-white px-3 py-1 rounded"
+                          onClick={() => {
+                            setUsuarioEdit(u);
+                            setShowEditar(true);
+                          }}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="bg-red-500 text-white px-3 py-1 rounded"
+                          onClick={() => deleteUsuario(u._id)}
+                          disabled={u.rol === "admin"}
+                        >
+                          Eliminar
+                        </button>
+                        <button
+                          className={`${u.bloqueado ? "bg-green-500" : "bg-gray-500"} text-white px-3 py-1 rounded`}
+                          onClick={() => toggleEstadoUsuario(u._id, u.bloqueado)}
+                        >
+                          {u.bloqueado ? "Habilitar" : "Bloquear"}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
