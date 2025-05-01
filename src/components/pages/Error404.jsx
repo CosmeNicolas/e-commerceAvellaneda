@@ -1,4 +1,3 @@
-import React from 'react'
 import img404 from '../../img/404.svg'
 import logo from '../../img/favicon-moda.png'
 import { FaCircleArrowLeft } from "react-icons/fa6";

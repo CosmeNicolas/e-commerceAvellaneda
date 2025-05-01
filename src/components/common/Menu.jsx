@@ -17,18 +17,25 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from '../../img/LuzBell.svg';
 /* import { FaShoppingCart } from "react-icons/fa"; */
+import { useCart } from './../helpers/CartContexts';
 
 const Menu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { carrito } = useCart();
+  const totalItems = carrito.length;
 
   // Menu items data for DRY principle
   const menuItems = [
     { path: '/', name: 'Inicio' },
     { path: '/productos', name: 'Productos' },
     { path: '/contacto', name: 'Contacto' },
-    /* { path: '/carrito', name: <FaShoppingCart />, icon: true }, */
-    { path: '/error404',  name:"🛒" , icon: true }
+    { 
+      path: '/carrito', 
+      name: `🛒${totalItems > 0 ? ` (${totalItems})` : ''}`, 
+      icon: true 
+    },
+    { path: '/error404',  name:"" , icon: true }
   ];
 
   const authItems = [

@@ -9,6 +9,7 @@ import Login from '../components/pages/Login'; // Importa el componente de Login
 import Registro from '../components/pages/Registro'; // Importa el componente de Registro
 import Administrador from '../components/pages/Administrador';
 import CardProductos from '../components/fragments/CardProductos';
+import Carrito from '../components/pages/Carrito'; // Importa el componente de Carrito
 
 
 const RoutesViews = () => {
@@ -25,7 +26,8 @@ const RoutesViews = () => {
           <Route exact path="/login" element={<Login/>} />
           <Route exact path="/registro" element={<Registro />} />
           <Route exact path="/administrador" element={<Administrador />} />
-          <Route exact path="/productos" element={<CardProductos/>}></Route>
+          <Route exact path="/productos" element={<CardProductos/>}/>
+          <Route exact path="/carrito" element={<Carrito />} />
         </Routes>
       </div>
       <Footer />
