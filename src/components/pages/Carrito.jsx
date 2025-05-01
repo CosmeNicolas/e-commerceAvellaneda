@@ -69,6 +69,12 @@ const Carrito = () => {
                   <p className="text-sm text-rosa/90 mt-1">
                     Subtotal: ${(item.precio * item.cantidad).toFixed(2)}
                   </p>
+                  <Link
+                    to={`/detalleProducto/${item._id}`}
+                    className="text-xs text-rosa/70 hover:text-fucsia underline underline-offset-2 transition"
+                  >
+                    Ver detalle
+                  </Link>
                 </div>
                 <Button
                   size="sm"

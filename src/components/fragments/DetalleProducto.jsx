@@ -1,18 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-  Button,
-  Image,
-} from "@nextui-org/react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import clienteAxios, { configHeaders } from "../../helpers/axios";
-/* import PasarelaPagoMp from "../common/PasarelaPagoMp"; // Importamos el componente de pago */
 import { useCart } from "../helpers/CartContexts";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@nextui-org/react";
 
 const DetalleProducto = () => {
   const { idProducto } = useParams();
@@ -29,7 +19,7 @@ const DetalleProducto = () => {
           `productos/${idProducto}`,
           configHeaders
         );
-        if (resultado.data && resultado.data.producto) {
+        if (resultado.data?.producto) {
           setProducto(resultado.data.producto);
         } else {
           setError("El producto no se encontró.");
@@ -43,47 +33,52 @@ const DetalleProducto = () => {
     obtenerProducto();
   }, [idProducto]);
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <p className="text-white text-center">Cargando...</p>;
+  if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (
-    <section className="container flex flex-col lg:flex-row justify-center p-8 bg-cover bg-center min-w-full min-h-screen">
-      <Card isFooterBlurred className="col-span-12 lg:col-span-7">
-        <CardHeader className="absolute z-10 top-1 flex-col items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">
-            Producto en detalle
-          </p>
-          <h4 className="text-white/90 font-medium text-xl">
-            {producto.nombreProducto}
-          </h4>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt={producto.nombreProducto}
-          className="z-0 w-full h-full object-cover rounded-b-none"
+    <section className="container mx-auto px-4 py-12 min-h-screen flex flex-col lg:flex-row gap-8 bg-[#1e1b2e] rounded-lg">
+      {/* Imagen */}
+      <div className="lg:w-1/2 flex justify-center">
+        <img
           src={producto.imagen}
+          alt={producto.nombreProducto}
+          className="rounded-lg object-cover w-full max-w-md"
         />
-        <CardBody>
-          <p className="font-medium text-lg">{producto.descripcion}</p>
-          <p className="text-xl font-bold mt-2">${producto.precio}</p>
-        </CardBody>
-        <Divider />
-        <CardFooter>
-          <Button as={Link} to="/" color="secondary">
-            Volver
-          </Button>
-          {/* Pasarela de pago integrada aquí */}
+      </div>
+
+      {/* Detalles */}
+      <div className="lg:w-1/2 flex flex-col justify-center text-white">
+        <h1 className="text-3xl font-bold text-fucsia mb-2 uppercase">
+          {producto.nombreProducto}
+        </h1>
+        <p className="text-lg text-gray-300 mb-6">{producto.descripcion}</p>
+
+        <p className="text-2xl font-extrabold text-rosa mb-6">
+          ${producto.precio.toLocaleString("es-AR")}
+        </p>
+
+        {/* Controles de acción */}
+        <div className="flex flex-col sm:flex-row gap-4">
           <Button
-            color="primary"
+            as={Link}
+            to="/productos"
+            className="bg-white/10 border border-white/20 text-white hover:bg-white/20"
+          >
+            Seguir comprando
+          </Button>
+
+          <Button
+            className="bg-gradient-to-r from-rosa to-fucsia text-white shadow-md hover:brightness-110"
             onClick={() => {
               agregarAlCarrito(producto);
               navigate("/carrito");
             }}
           >
-            Agregar al Carrito
+            Agregar al carrito
           </Button>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </section>
   );
 };
