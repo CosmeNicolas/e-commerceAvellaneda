@@ -1,8 +1,8 @@
-import { 
-  Navbar, 
-  NavbarBrand, 
-  NavbarContent, 
-  NavbarItem, 
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
   NavbarMenuToggle,
   Button
 } from "@nextui-org/react";
@@ -16,8 +16,8 @@ import {
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from '../../img/LuzBell.svg';
-/* import { FaShoppingCart } from "react-icons/fa"; */
-import { useCart } from './../helpers/CartContexts';
+import { useCart } from './../helpers/CartContexts'; // Asegurate que el nombre del archivo es CartContext.jsx
+import { LiaShoppingCartSolid } from "react-icons/lia";
 
 const Menu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,17 +25,11 @@ const Menu = () => {
   const { carrito } = useCart();
   const totalItems = carrito.length;
 
-  // Menu items data for DRY principle
   const menuItems = [
     { path: '/', name: 'Inicio' },
     { path: '/productos', name: 'Productos' },
     { path: '/contacto', name: 'Contacto' },
-    { 
-      path: '/carrito', 
-      name: `🛒${totalItems > 0 ? ` (${totalItems})` : ''}`, 
-      icon: true 
-    },
-    { path: '/error404',  name:"" , icon: true }
+    { path: '/carrito', name: <LiaShoppingCartSolid />, icon: true }
   ];
 
   const authItems = [
@@ -50,7 +44,6 @@ const Menu = () => {
         className="bg-gradient-to-b from-negroMate to-[#2A2342] border-b border-lila/20 shadow-sm"
         maxWidth="full"
       >
-        {/* Logo/Brand */}
         <NavbarBrand>
           <Link to="/" className="flex items-center gap-2">
             <img className="w-8" src={logo} alt="LuzBell Logo" />
@@ -63,18 +56,32 @@ const Menu = () => {
         {/* Desktop Navigation */}
         <NavbarContent className="hidden sm:flex gap-1" justify="center">
           {menuItems.map((item) => (
-            <NavbarItem key={item.path} isActive={location.pathname === item.path}>
+            <NavbarItem
+              key={item.path}
+              isActive={location.pathname === item.path}
+            >
               <Link
                 to={item.path}
-                className={`px-4 py-2 rounded-full transition-all ${
+                className={`relative flex items-center justify-center rounded-full transition-all px-4 py-2 ${
                   location.pathname === item.path
-                    ? 'bg-gradient-to-r from-rosa/80 to-fucsia/80 text-white shadow-md'
-                    : item.icon 
-                      ? 'text-blanco hover:bg-white/10 p-2'
-                      : 'text-blanco hover:text-rosa hover:bg-white/10'
+                    ? "bg-gradient-to-r from-rosa/80 to-fucsia/80 text-white shadow-md"
+                    : item.icon
+                    ? "text-blanco hover:bg-white/10"
+                    : "text-blanco hover:text-rosa hover:bg-white/10"
                 }`}
               >
-                {item.name}
+                {item.path === "/carrito" ? (
+                  <div className="relative">
+                    <LiaShoppingCartSolid size={22} />
+                    {totalItems > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-rosa text-white text-xs font-bold px-1.5 py-0.5 rounded-full leading-none">
+                        {totalItems}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  item.name
+                )}
               </Link>
             </NavbarItem>
           ))}
@@ -89,8 +96,8 @@ const Menu = () => {
                 to={item.path}
                 className={`${
                   location.pathname === item.path
-                    ? 'bg-gradient-to-r from-rosa to-fucsia text-white'
-                    : 'bg-white/5 text-blanco hover:bg-white/10'
+                    ? "bg-gradient-to-r from-rosa to-fucsia text-white"
+                    : "bg-white/5 text-blanco hover:bg-white/10"
                 } border border-lila/30`}
               >
                 {item.name}
@@ -99,16 +106,15 @@ const Menu = () => {
           ))}
         </NavbarContent>
 
-        {/* Mobile Menu Toggle */}
-        <NavbarMenuToggle 
-          aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"} 
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
           className="sm:hidden text-blanco"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         />
       </Navbar>
 
-      {/* Mobile Menu Drawer */}
-      <Drawer 
+      {/* Mobile Drawer */}
+      <Drawer
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
         direction="right"
@@ -122,7 +128,7 @@ const Menu = () => {
               LuzBell Mayorista
             </p>
           </DrawerHeader>
-          
+
           <DrawerBody className="px-4">
             <div className="flex flex-col gap-3">
               {[...menuItems, ...authItems].map((item, index) => (
@@ -133,12 +139,23 @@ const Menu = () => {
                   fullWidth
                   className={`justify-start h-14 text-lg ${
                     location.pathname === item.path
-                      ? 'bg-gradient-to-r from-rosa to-fucsia text-white'
-                      : 'bg-transparent text-blanco hover:bg-white/10'
+                      ? "bg-gradient-to-r from-rosa to-fucsia text-white"
+                      : "bg-transparent text-blanco hover:bg-white/10"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.name}
+                  {item.name === "carrito" ? (
+                    <div className="relative flex items-center gap-2">
+                      <FaShoppingCart size={20} />
+                      {totalItems > 0 && (
+                        <span className="absolute -top-2 -right-3 bg-rosa text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                          {totalItems}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    item.name
+                  )}
                 </Button>
               ))}
             </div>
