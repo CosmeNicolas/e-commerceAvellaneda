@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const WhatsAppButton = () => {
@@ -21,7 +20,7 @@ const WhatsAppButton = () => {
       </a>
       
       {/* Efecto de pulso opcional */}
-      <style jsx>{`
+      <style>{`
         .pulse {
           animation: pulse-animation 2s infinite;
         }

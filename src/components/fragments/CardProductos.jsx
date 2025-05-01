@@ -1,8 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import HashLoader from "react-spinners/HashLoader";
-import { useEffect, useState } from 'react';
 
 const CardProductos = () => {
   const [productos, setProductos] = useState([]);
@@ -12,6 +12,7 @@ const CardProductos = () => {
     try {
       setLoading(true);
       const url = `${import.meta.env.VITE_URL_BACK_LOCAL}/api/productos`;
+      console.log(url)
       const resultado = await axios.get(url);
       const productosRecibidos = resultado.data.productos || resultado.data || [];
       setProductos(productosRecibidos);

@@ -4,7 +4,8 @@ import "../../css/PasarelaPagoMp.css";
 import mpLogo from "../../img/mercadopagoLogo.svg"
 import { useEffect, useState } from "react";
 
-const PasarelaPagoMp = ({ producto }) => {
+const PasarelaPagoMp = ({ producto}) => {
+
   const [preferenceId, setPreferenceId] = useState(null); // Estado para almacenar el preference_id de Mercado Pago
 
   useEffect(() => {

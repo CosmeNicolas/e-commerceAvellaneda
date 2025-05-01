@@ -9,7 +9,7 @@ import 'swiper/css/scrollbar';
 import ropa1 from '../../img/1.png';
 import ropa2 from '../../img/2.png';
 import ropa3 from '../../img/3.png';
-import WhatsAppButton from '../common/WhatsAppButton';
+
 
 const Inicio = () => {
   return (
