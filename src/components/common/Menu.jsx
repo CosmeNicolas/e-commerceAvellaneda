@@ -33,7 +33,6 @@ const Menu = () => {
   const nombreUsuario = getUserName();
   
 
-console.log(nombreUsuario)
 
   const menuItems = [
     { path: '/', name: 'Inicio' },
@@ -48,17 +47,30 @@ console.log(nombreUsuario)
       text: "¿Estás seguro de que deseas salir?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, salir"
+      confirmButtonText: "Sí, salir",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#FB2576",   // fucsia
+      cancelButtonColor: "#E966A0",    // rosa
+      background: "#191825",           // negroMate
+      color: "#FAF1E6",                // blanco
+      iconColor: "#E384FF"             // lila
     }).then((result) => {
       if (result.isConfirmed) {
         logout();
-        Swal.fire("Sesión cerrada", "Hasta pronto", "success");
+        Swal.fire({
+          title: "Sesión cerrada",
+          text: "Hasta pronto",
+          icon: "success",
+          confirmButtonColor: "#E966A0",
+          background: "#191825",
+          color: "#FAF1E6",
+          iconColor: "#FB2576"
+        });
         navigate("/login");
       }
     });
   };
+  
 
   return (
     <>

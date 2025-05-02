@@ -113,7 +113,15 @@ const FormularioRegistro = ({ idPage }) => {
         configHeaders
       );
       if (result.status === 200) {
-        Swal.fire("¡Bienvenido!", result.data.msg, "success");
+        Swal.fire({
+          title: "¡Bienvenido!",
+          text: result.data.msg,
+          icon: "success",
+          confirmButtonColor: "#E966A0",   // rosa
+          background: "#191825",           // negroMate
+          color: "#FAF1E6",                // blanco para el texto
+          iconColor: "#FB2576"             // fucsia
+        });
         sessionStorage.setItem("token", JSON.stringify(result.data.token));
         sessionStorage.setItem("rol", JSON.stringify(result.data.rol));
         sessionStorage.setItem(

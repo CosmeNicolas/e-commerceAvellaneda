@@ -3,7 +3,7 @@ import VistaUsuarios from "./VistaUsuario";
 import VistaProductos from "./VistaProductos";
 
 const Administrador = () => {
-  const [tabActiva, setTabActiva] = useState("usuarios");
+  const [tabActiva, setTabActiva] = useState("usaurios");
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">

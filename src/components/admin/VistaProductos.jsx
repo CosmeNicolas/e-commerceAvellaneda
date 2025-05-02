@@ -69,9 +69,27 @@ const VistaProductos = () => {
       setNuevoProducto({ nombreProducto: "", descripcion: "", precio: 0 });
       setImagenProducto(null);
       await verProductos();
-      Swal.fire("Éxito", "Producto creado correctamente", "success");
+      Swal.fire({
+        title: "Éxito",
+        text: "Producto creado correctamente",
+        icon: "success",
+        confirmButtonColor: "#E966A0",   // rosa
+        background: "#191825",           // negroMate
+        color: "#FAF1E6",                // blanco
+        iconColor: "#FB2576"             // fucsia
+      });
+      
     } catch (error) {
-      Swal.fire("Error", "No se pudo crear el producto", "error");
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo crear el producto",
+        icon: "error",
+        confirmButtonColor: "#FB2576",   // fucsia
+        background: "#191825",           // negroMate
+        color: "#FAF1E6",                // blanco
+        iconColor: "#E966A0"             // rosa
+      });
+      
     } finally {
       setCargando(false);
     }
@@ -101,9 +119,27 @@ const VistaProductos = () => {
       setProductoEdit(null);
       setImagenProducto(null);
       await verProductos();
-      Swal.fire("Éxito", "Producto actualizado", "success");
+      Swal.fire({
+        title: "Éxito",
+        text: "Producto actualizado",
+        icon: "success",
+        confirmButtonColor: "#FB2576",   // fucsia
+        background: "#191825",           // negroMate
+        color: "#FAF1E6",                // blanco
+        iconColor: "#E384FF"             // lila
+      });
+      
     } catch (error) {
-      Swal.fire("Error", "No se pudo actualizar", "error");
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo actualizar",
+        icon: "error",
+        confirmButtonColor: "#E966A0",   // rosa
+        background: "#191825",           // negroMate
+        color: "#FAF1E6",                // blanco
+        iconColor: "#FB2576"             // fucsia
+      });
+      
     } finally {
       setCargando(false);
     }
@@ -112,24 +148,48 @@ const VistaProductos = () => {
   const eliminarProducto = async (id) => {
     const confirm = await Swal.fire({
       title: "¿Eliminar producto?",
+      text: "Esta acción no se puede deshacer",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#FB2576",   // fucsia
+      cancelButtonColor: "#E966A0",    // rosa
+      background: "#191825",           // negroMate
+      color: "#FAF1E6",                // blanco
+      iconColor: "#E384FF"             // lila
     });
-
+  
     if (confirm.isConfirmed) {
       setCargando(true);
       try {
         await clienteAxios.delete(`/productos/${id}`, configHeaders);
         await verProductos();
-        Swal.fire("Eliminado", "Producto eliminado", "success");
+        Swal.fire({
+          title: "Eliminado",
+          text: "Producto eliminado",
+          icon: "success",
+          confirmButtonColor: "#E966A0",
+          background: "#191825",
+          color: "#FAF1E6",
+          iconColor: "#FB2576"
+        });
       } catch (error) {
-        Swal.fire("Error", "No se pudo eliminar", "error");
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo eliminar",
+          icon: "error",
+          confirmButtonColor: "#E966A0",
+          background: "#191825",
+          color: "#FAF1E6",
+          iconColor: "#FB2576"
+        });
       } finally {
         setCargando(false);
       }
     }
   };
+  
 
   return (
     <div className="relative overflow-x-auto">
@@ -196,6 +256,113 @@ const VistaProductos = () => {
           ))}
         </tbody>
       </table>
+
+      {showCrear && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Crear Producto</h2>
+            <form onSubmit={crearProducto}>
+              <input
+                type="text"
+                name="nombreProducto"
+                placeholder="Nombre del producto"
+                value={nuevoProducto.nombreProducto}
+                onChange={handleChangeNuevoProducto}
+                className="w-full border p-2 mb-3 rounded"
+              />
+              <input
+                type="text"
+                name="descripcion"
+                placeholder="Descripción"
+                value={nuevoProducto.descripcion}
+                onChange={handleChangeNuevoProducto}
+                className="w-full border p-2 mb-3 rounded"
+              />
+              <input
+                type="number"
+                name="precio"
+                placeholder="Precio"
+                value={nuevoProducto.precio}
+                onChange={handleChangeNuevoProducto}
+                className="w-full border p-2 mb-3 rounded"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImagenProducto(e.target.files[0])}
+                className="w-full border p-2 mb-4 rounded"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCrear(false)}
+                  className="px-4 py-2 bg-gray-400 text-white rounded"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Crear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showEditar && productoEdit && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Editar Producto</h2>
+            <form onSubmit={editarProducto}>
+              <input
+                type="text"
+                name="nombreProducto"
+                value={productoEdit.nombreProducto}
+                onChange={handleChangeEditarProducto}
+                className="w-full border p-2 mb-3 rounded"
+              />
+              <input
+                type="text"
+                name="descripcion"
+                value={productoEdit.descripcion}
+                onChange={handleChangeEditarProducto}
+                className="w-full border p-2 mb-3 rounded"
+              />
+              <input
+                type="number"
+                name="precio"
+                value={productoEdit.precio}
+                onChange={handleChangeEditarProducto}
+                className="w-full border p-2 mb-3 rounded"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImagenProducto(e.target.files[0])}
+                className="w-full border p-2 mb-4 rounded"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditar(false)}
+                  className="px-4 py-2 bg-gray-400 text-white rounded"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
