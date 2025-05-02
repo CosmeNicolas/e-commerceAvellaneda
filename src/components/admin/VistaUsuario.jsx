@@ -40,6 +40,10 @@ const VistaUsuarios = () => {
     setNuevoUsuario({ ...nuevoUsuario, [e.target.name]: e.target.value });
   };
 
+  const handleChangeEditarUsuario = (e) => {
+    setUsuarioEdit({ ...usuarioEdit, [e.target.name]: e.target.value });
+  };
+
   const handleCrearUsuario = async (e) => {
     e.preventDefault();
     try {
@@ -87,6 +91,18 @@ const VistaUsuarios = () => {
     }
   };
 
+  const handleEditarUsuario = async (e) => {
+    e.preventDefault();
+    try {
+      await clienteAxios.put(`/usuarios/${usuarioEdit._id}`, usuarioEdit, configHeaders);
+      Swal.fire("Éxito", "Usuario actualizado", "success");
+      setShowEditar(false);
+      verUsuarios();
+    } catch (error) {
+      Swal.fire("Error", "No se pudo actualizar", "error");
+    }
+  };
+
   const deleteUsuario = async (idUsuario) => {
     const confirm = await Swal.fire({
       title: "¿Eliminar usuario?",
@@ -125,18 +141,6 @@ const VistaUsuarios = () => {
     }
   };
 
-  const handleEditarUsuario = async (e) => {
-    e.preventDefault();
-    try {
-      await clienteAxios.put(`/usuarios/${usuarioEdit._id}`, usuarioEdit, configHeaders);
-      Swal.fire("Éxito", "Usuario actualizado", "success");
-      setShowEditar(false);
-      verUsuarios();
-    } catch (error) {
-      Swal.fire("Error", "No se pudo actualizar", "error");
-    }
-  };
-
   return (
     <div className="overflow-x-auto">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
@@ -150,7 +154,7 @@ const VistaUsuarios = () => {
       </div>
 
       {cargando ? (
-        <div className="flex justify-center">
+        <div className="flex justify-center z-[9999]">
           <HashLoader color="#E966A0" />
         </div>
       ) : (
@@ -164,8 +168,8 @@ const VistaUsuarios = () => {
               </tr>
             </thead>
             <tbody>
-              {usuarios.map((u) => (
-                u._id !== JSON.parse(sessionStorage.getItem("idUsuario")) && (
+              {usuarios.map((u) =>
+                u._id !== JSON.parse(sessionStorage.getItem("idUsuario")) ? (
                   <tr key={u._id} className="border-t text-gray-700">
                     <td className="px-4 py-2">{u.nombreUsuario}</td>
                     <td className="px-4 py-2">{u.rol}</td>
@@ -196,10 +200,112 @@ const VistaUsuarios = () => {
                       </div>
                     </td>
                   </tr>
-                )
-              ))}
+                ) : null
+              )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal de creación */}
+      {showCrear && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Crear Usuario</h2>
+            <form onSubmit={handleCrearUsuario}>
+              <input
+                className="w-full border p-2 rounded mb-3"
+                type="text"
+                name="nombreUsuario"
+                placeholder="Nombre de usuario"
+                value={nuevoUsuario.nombreUsuario}
+                onChange={handleChangeNuevoUsuario}
+              />
+              <input
+                className="w-full border p-2 rounded mb-3"
+                type="email"
+                name="correo"
+                placeholder="Correo"
+                value={nuevoUsuario.correo}
+                onChange={handleChangeNuevoUsuario}
+              />
+              <input
+                className="w-full border p-2 rounded mb-3"
+                type="password"
+                name="password"
+                placeholder="Contraseña"
+                value={nuevoUsuario.password}
+                onChange={handleChangeNuevoUsuario}
+              />
+              <select
+                className="w-full border p-2 rounded mb-4"
+                name="rol"
+                value={nuevoUsuario.rol}
+                onChange={handleChangeNuevoUsuario}
+              >
+                <option value="usuario">Usuario</option>
+                <option value="admin">Administrador</option>
+              </select>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowCrear(false)}
+                  className="px-4 py-2 bg-gray-400 text-white rounded"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Crear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de edición */}
+      {showEditar && usuarioEdit && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
+            <form onSubmit={handleEditarUsuario}>
+              <input
+                className="w-full border p-2 rounded mb-3"
+                type="text"
+                name="nombreUsuario"
+                value={usuarioEdit.nombreUsuario}
+                onChange={handleChangeEditarUsuario}
+              />
+              <select
+                className="w-full border p-2 rounded mb-4"
+                name="rol"
+                value={usuarioEdit.rol}
+                onChange={handleChangeEditarUsuario}
+              >
+                <option value="usuario">Usuario</option>
+                <option value="admin">Administrador</option>
+              </select>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditar(false)}
+                  className="px-4 py-2 bg-gray-400 text-white rounded"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
