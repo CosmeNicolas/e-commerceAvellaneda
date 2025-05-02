@@ -21,7 +21,7 @@ const VistaUsuarios = () => {
   const verUsuarios = async () => {
     try {
       setCargando(true);
-      const result = await clienteAxios.get("/usuarios", configHeaders);
+      const result = await clienteAxios.get("/usuarios", configHeaders());
       const usuariosObtenidos = result?.data?.result?.usuarios || [];
       setUsuarios(usuariosObtenidos);
     } catch (error) {
@@ -79,7 +79,7 @@ const VistaUsuarios = () => {
         return;
       }
 
-      await clienteAxios.post("/usuarios", nuevoUsuario, configHeaders);
+      await clienteAxios.post("/usuarios", nuevoUsuario, configHeaders());
       Swal.fire("Éxito", "Usuario creado correctamente", "success");
 
       setNuevoUsuario({
@@ -105,7 +105,7 @@ const VistaUsuarios = () => {
       await clienteAxios.put(
         `/usuarios/${usuarioEdit._id}`,
         usuarioEdit,
-        configHeaders
+        configHeaders()
       );
       Swal.fire("Éxito", "Usuario actualizado", "success");
       setShowEditar(false);
@@ -125,7 +125,7 @@ const VistaUsuarios = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await clienteAxios.delete(`/usuarios/${idUsuario}`, configHeaders);
+        await clienteAxios.delete(`/usuarios/${idUsuario}`, configHeaders());
         Swal.fire("Eliminado", "Usuario eliminado", "success");
         verUsuarios();
       } catch (error) {
@@ -145,7 +145,7 @@ const VistaUsuarios = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await clienteAxios.put(`/usuarios/${accion}/${id}`, {}, configHeaders);
+        await clienteAxios.put(`/usuarios/${accion}/${id}`, {}, configHeaders());
         verUsuarios();
       } catch (error) {
         Swal.fire("Error", "No se pudo cambiar el estado", "error");

@@ -8,12 +8,16 @@ const clienteAxios = axios.create({
 });
 
 /* configuracion de la cabecera para el token */
-export const configHeaders = {
-  headers: {
-    "content-type": "application/json",
-    auth: `${token}`,
-  },
+export const configHeaders = () => {
+  const token = JSON.parse(sessionStorage.getItem("token"));
+  return {
+    headers: {
+      "content-type": "application/json",
+      auth: token,
+    },
+  };
 };
+
 
 export const configHeadersImagen = {
   headers: {

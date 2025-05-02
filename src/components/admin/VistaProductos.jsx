@@ -23,7 +23,7 @@ const VistaProductos = () => {
   const verProductos = async () => {
     setCargando(true);
     try {
-      const result = await clienteAxios.get("/productos", configHeaders);
+      const result = await clienteAxios.get("/productos", configHeaders());
       setProductos(result.data.productos);
     } catch (error) {
       console.error("Error al obtener productos", error);
@@ -51,7 +51,7 @@ const VistaProductos = () => {
       const res = await clienteAxios.post(
         "/productos",
         nuevoProducto,
-        configHeaders
+        configHeaders()
       );
       const idProducto = res.data._id;
 
@@ -102,7 +102,7 @@ const VistaProductos = () => {
       await clienteAxios.put(
         `/productos/${productoEdit._id}`,
         productoEdit,
-        configHeaders
+        configHeaders()
       );
 
       if (imagenProducto) {
@@ -163,7 +163,7 @@ const VistaProductos = () => {
     if (confirm.isConfirmed) {
       setCargando(true);
       try {
-        await clienteAxios.delete(`/productos/${id}`, configHeaders);
+        await clienteAxios.delete(`/productos/${id}`, configHeaders());
         await verProductos();
         Swal.fire({
           title: "Eliminado",
