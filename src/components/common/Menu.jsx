@@ -1,10 +1,11 @@
+// src/components/common/Menu.jsx
 import {
   Navbar,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
   NavbarMenuToggle,
-  Button
+  Button,
 } from "@nextui-org/react";
 import {
   Drawer,
@@ -14,16 +15,25 @@ import {
   DrawerFooter
 } from "@heroui/drawer";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import logo from '../../img/LuzBell.svg';
-import { useCart } from './../helpers/CartContexts'; // Asegurate que el nombre del archivo es CartContext.jsx
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import logo from "../../img/LuzBell.svg";
 import { LiaShoppingCartSolid } from "react-icons/lia";
+import { useCart } from "../helpers/CartContexts";
+import Swal from "sweetalert2";
+import { isAdmin, isLoggedIn, getUserName, logout } from "../../config/auth";
+
+
 
 const Menu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
   const { carrito } = useCart();
   const totalItems = carrito.length;
+  const nombreUsuario = getUserName();
+  
+
+console.log(nombreUsuario)
 
   const menuItems = [
     { path: '/', name: 'Inicio' },
@@ -32,10 +42,23 @@ const Menu = () => {
     { path: '/carrito', name: <LiaShoppingCartSolid />, icon: true }
   ];
 
-  const authItems = [
-    { path: '/login', name: 'Iniciar Sesión' },
-    { path: '/registro', name: 'Registrarse' }
-  ];
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Cerrar sesión",
+      text: "¿Estás seguro de que deseas salir?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, salir"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        Swal.fire("Sesión cerrada", "Hasta pronto", "success");
+        navigate("/login");
+      }
+    });
+  };
 
   return (
     <>
@@ -53,7 +76,6 @@ const Menu = () => {
           </Link>
         </NavbarBrand>
 
-        {/* Desktop Navigation */}
         <NavbarContent className="hidden sm:flex gap-1" justify="center">
           {menuItems.map((item) => (
             <NavbarItem
@@ -85,25 +107,40 @@ const Menu = () => {
               </Link>
             </NavbarItem>
           ))}
+
+          {isAdmin() && (
+            <NavbarItem>
+              <Link
+                to="/administrador"
+                className="text-blanco hover:text-fucsia hover:bg-white/10 px-4 py-2 rounded-full border border-lila/30"
+              >
+                Administrar
+              </Link>
+            </NavbarItem>
+          )}
         </NavbarContent>
 
-        {/* Auth Buttons - Desktop */}
         <NavbarContent justify="end" className="hidden sm:flex gap-2">
-          {authItems.map((item) => (
-            <NavbarItem key={item.path}>
+          {isLoggedIn() ? (
+            <>
+              <span className="text-white/80 px-2">Hola, {nombreUsuario}❤️</span>
               <Button
-                as={Link}
-                to={item.path}
-                className={`${
-                  location.pathname === item.path
-                    ? "bg-gradient-to-r from-rosa to-fucsia text-white"
-                    : "bg-white/5 text-blanco hover:bg-white/10"
-                } border border-lila/30`}
+                onClick={handleLogout}
+                className="bg-white/5 text-blanco hover:bg-white/10 border border-lila/30"
               >
-                {item.name}
+                Cerrar sesión
               </Button>
-            </NavbarItem>
-          ))}
+            </>
+          ) : (
+            <>
+              <Button as={Link} to="/login" className="bg-white/5 text-blanco hover:bg-white/10 border border-lila/30">
+                Iniciar sesión
+              </Button>
+              <Button as={Link} to="/registro" className="bg-white/5 text-blanco hover:bg-white/10 border border-lila/30">
+                Registrarse
+              </Button>
+            </>
+          )}
         </NavbarContent>
 
         <NavbarMenuToggle
@@ -131,9 +168,9 @@ const Menu = () => {
 
           <DrawerBody className="px-4">
             <div className="flex flex-col gap-3">
-              {[...menuItems, ...authItems].map((item, index) => (
+              {menuItems.map((item) => (
                 <Button
-                  key={`${item.path}-${index}`}
+                  key={item.path}
                   as={Link}
                   to={item.path}
                   fullWidth
@@ -144,20 +181,59 @@ const Menu = () => {
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.name === "carrito" ? (
-                    <div className="relative flex items-center gap-2">
-                      <FaShoppingCart size={20} />
-                      {totalItems > 0 && (
-                        <span className="absolute -top-2 -right-3 bg-rosa text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                          {totalItems}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    item.name
-                  )}
+                  {item.name}
                 </Button>
               ))}
+
+              {isAdmin() && (
+                <Button
+                  as={Link}
+                  to="/administrador"
+                  fullWidth
+                  className="justify-start h-14 text-lg bg-white/5 text-blanco hover:bg-white/10 border border-lila/30"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Administrar
+                </Button>
+              )}
+
+              {isLoggedIn() ? (
+                <>
+                  <span className="text-white/80 px-2">Hola, {nombreUsuario}❤️</span>
+
+                  <Button
+                    fullWidth
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="justify-start h-14 text-lg bg-white/5 text-blanco hover:bg-white/10 border border-lila/30"
+                  >
+                    Cerrar sesión
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    as={Link}
+                    to="/login"
+                    fullWidth
+                    className="justify-start h-14 text-lg bg-white/5 text-blanco hover:bg-white/10 border border-lila/30"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Iniciar sesión
+                  </Button>
+                  <Button
+                    as={Link}
+                    to="/registro"
+                    fullWidth
+                    className="justify-start h-14 text-lg bg-white/5 text-blanco hover:bg-white/10 border border-lila/30"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Registrarse
+                  </Button>
+                </>
+              )}
             </div>
           </DrawerBody>
 

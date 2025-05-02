@@ -1,11 +1,10 @@
 // src/components/common/PasarelaPagoMp.jsx
-import clienteAxios, { configHeaders } from "../../helpers/axios";
+import clienteAxios, { configHeaders } from "../../config/axios";
 import "../../css/PasarelaPagoMp.css";
-import mpLogo from "../../img/mercadopagoLogo.svg"
+import mpLogo from "../../img/mercadopagoLogo.svg";
 import { useEffect, useState } from "react";
 
-const PasarelaPagoMp = ({ producto}) => {
-
+const PasarelaPagoMp = ({ producto }) => {
   const [preferenceId, setPreferenceId] = useState(null); // Estado para almacenar el preference_id de Mercado Pago
 
   useEffect(() => {
@@ -20,9 +19,9 @@ const PasarelaPagoMp = ({ producto}) => {
               {
                 nombre: producto.nombreProducto,
                 precio: Number(producto.precio),
-                cantidad: 1
-              }
-            ]
+                cantidad: 1,
+              },
+            ],
           },
           configHeaders
         );
@@ -54,26 +53,27 @@ const PasarelaPagoMp = ({ producto}) => {
   return (
     <div className="flex justify-center items-center">
       {preferenceId ? (
-       <div className="flex justify-center items-center">
-       {preferenceId ? (
-         <button
-           onClick={handlePagar}
-           className="flex items-center gap-3 bg-[#009EE3] hover:bg-[#00B4FF] text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-md transform transition-transform hover:-translate-y-1 hover:shadow-lg"
-         >
-           <img
-             src={mpLogo}
-             alt="Mercado Pago"
-             className="w-14 h-10"
-           />
-           <span className="text-sm md:text-base">Pagar con Mercado Pago</span>
-         </button>
-       ) : (
-         <p className="text-center text-gray-500">Cargando la pasarela de pago...</p>
-       )}
-     </div>
-     
+        <div className="flex justify-center items-center">
+          {preferenceId ? (
+            <button
+              onClick={handlePagar}
+              className="flex items-center gap-3 bg-[#009EE3] hover:bg-[#00B4FF] text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-md transform transition-transform hover:-translate-y-1 hover:shadow-lg"
+            >
+              <img src={mpLogo} alt="Mercado Pago" className="w-14 h-10" />
+              <span className="text-sm md:text-base">
+                Pagar con Mercado Pago
+              </span>
+            </button>
+          ) : (
+            <p className="text-center text-gray-500">
+              Cargando la pasarela de pago...
+            </p>
+          )}
+        </div>
       ) : (
-        <p className="text-center text-gray-500">Cargando la pasarela de pago...</p>
+        <p className="text-center text-gray-500">
+          Cargando la pasarela de pago...
+        </p>
       )}
     </div>
   );

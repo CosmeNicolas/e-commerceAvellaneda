@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import clienteAxios, { configHeaders, configHeadersImagen } from "../../helpers/axios";
+import clienteAxios, {
+  configHeaders,
+  configHeadersImagen,
+} from "../../config/axios";
 import Swal from "sweetalert2";
 import { HashLoader } from "react-spinners";
 import { FaCartPlus } from "react-icons/fa";
@@ -45,13 +48,21 @@ const VistaProductos = () => {
     e.preventDefault();
     setCargando(true);
     try {
-      const res = await clienteAxios.post("/productos", nuevoProducto, configHeaders);
+      const res = await clienteAxios.post(
+        "/productos",
+        nuevoProducto,
+        configHeaders
+      );
       const idProducto = res.data._id;
 
       if (imagenProducto) {
         const formData = new FormData();
         formData.append("imagen", imagenProducto);
-        await clienteAxios.post(`/productos/agregarImagen/${idProducto}`, formData, configHeadersImagen);
+        await clienteAxios.post(
+          `/productos/agregarImagen/${idProducto}`,
+          formData,
+          configHeadersImagen
+        );
       }
 
       setShowCrear(false);
@@ -70,12 +81,20 @@ const VistaProductos = () => {
     e.preventDefault();
     setCargando(true);
     try {
-      await clienteAxios.put(`/productos/${productoEdit._id}`, productoEdit, configHeaders);
+      await clienteAxios.put(
+        `/productos/${productoEdit._id}`,
+        productoEdit,
+        configHeaders
+      );
 
       if (imagenProducto) {
         const formData = new FormData();
         formData.append("imagen", imagenProducto);
-        await clienteAxios.post(`/productos/agregarImagen/${productoEdit._id}`, formData, configHeadersImagen);
+        await clienteAxios.post(
+          `/productos/agregarImagen/${productoEdit._id}`,
+          formData,
+          configHeadersImagen
+        );
       }
 
       setShowEditar(false);
@@ -148,7 +167,11 @@ const VistaProductos = () => {
               <td className="px-4 py-2">{producto.descripcion}</td>
               <td className="px-4 py-2">${producto.precio}</td>
               <td className="px-4 py-2">
-                <img src={producto.imagen} alt="producto" className="w-16 h-16 object-cover" />
+                <img
+                  src={producto.imagen}
+                  alt="producto"
+                  className="w-16 h-16 object-cover"
+                />
               </td>
               <td className="px-4 py-2">
                 <div className="flex flex-wrap gap-2">

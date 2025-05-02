@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import clienteAxios, { configHeaders } from "../../helpers/axios";
+import clienteAxios, { configHeaders } from "../../config/axios";
 import { useCart } from "../helpers/CartContexts";
 import { Button } from "@nextui-org/react";
 

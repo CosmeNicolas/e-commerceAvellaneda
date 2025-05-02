@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import clienteAxios, { configHeaders } from "../../helpers/axios";
+import clienteAxios, { configHeaders } from "../../config/axios";
 import { HashLoader } from "react-spinners";
 import Swal from "sweetalert2";
 import { FaUserPlus } from "react-icons/fa";
@@ -56,12 +56,20 @@ const VistaUsuarios = () => {
       }
 
       if (nombreUsuario.length < 5) {
-        Swal.fire("Error", "El nombre debe tener al menos 5 caracteres", "error");
+        Swal.fire(
+          "Error",
+          "El nombre debe tener al menos 5 caracteres",
+          "error"
+        );
         return;
       }
 
       if (password.length < 8 || password.length > 40) {
-        Swal.fire("Error", "La contraseña debe tener entre 8 y 40 caracteres", "error");
+        Swal.fire(
+          "Error",
+          "La contraseña debe tener entre 8 y 40 caracteres",
+          "error"
+        );
         return;
       }
 
@@ -94,7 +102,11 @@ const VistaUsuarios = () => {
   const handleEditarUsuario = async (e) => {
     e.preventDefault();
     try {
-      await clienteAxios.put(`/usuarios/${usuarioEdit._id}`, usuarioEdit, configHeaders);
+      await clienteAxios.put(
+        `/usuarios/${usuarioEdit._id}`,
+        usuarioEdit,
+        configHeaders
+      );
       Swal.fire("Éxito", "Usuario actualizado", "success");
       setShowEditar(false);
       verUsuarios();
@@ -192,8 +204,12 @@ const VistaUsuarios = () => {
                           Eliminar
                         </button>
                         <button
-                          className={`${u.bloqueado ? "bg-green-500" : "bg-gray-500"} text-white px-3 py-1 rounded`}
-                          onClick={() => toggleEstadoUsuario(u._id, u.bloqueado)}
+                          className={`${
+                            u.bloqueado ? "bg-green-500" : "bg-gray-500"
+                          } text-white px-3 py-1 rounded`}
+                          onClick={() =>
+                            toggleEstadoUsuario(u._id, u.bloqueado)
+                          }
                         >
                           {u.bloqueado ? "Habilitar" : "Bloquear"}
                         </button>

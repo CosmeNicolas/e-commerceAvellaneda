@@ -1,14 +1,24 @@
+// src/components/fragments/FormularioRegistro.jsx
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import clienteAxios, { configHeaders } from "../../helpers/axios";
+import clienteAxios, { configHeaders } from "../../config/axios";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 const FormularioRegistro = ({ idPage }) => {
   const navigate = useNavigate();
-  const [formRegister, setFormRegister] = useState({});
-  const [formLogin, setFormLogin] = useState({});
+  const [formRegister, setFormRegister] = useState({
+    nombreUsuario: "",
+    correo: "",
+    password: "",
+    rpassword: "",
+  });
+  const [formLogin, setFormLogin] = useState({
+    nombreUsuario: "",
+    password: "",
+  });
   const [isProcessing, setIsProcessing] = useState(false);
-
 
   const handleChangeregister = (e) => {
     setFormRegister({ ...formRegister, [e.target.name]: e.target.value });
@@ -18,120 +28,110 @@ const FormularioRegistro = ({ idPage }) => {
     setFormLogin({ ...formLogin, [e.target.name]: e.target.value });
   };
 
+  /* Registro */
+  const handleClickRegister = async (e) => {
+    e.preventDefault();
+    setIsProcessing(true);
 
- /* Registro */
- const handleClickRegister = async (e) => {
-  e.preventDefault();
-  setIsProcessing(true); // Mover al inicio para activar loading inmediatamente
-  
-  const { nombreUsuario, password, rpassword, correo } = formRegister;
-  
-  // Validaciones mejoradas
-  if (!nombreUsuario?.trim() || !password?.trim() || !rpassword?.trim() || !correo?.trim()) {
-    alert("Todos los campos son obligatorios");
-    setIsProcessing(false);
-    return;
-  }
+    const { nombreUsuario, password, rpassword, correo } = formRegister;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (password !== rpassword) {
-    alert("Las contraseñas no coinciden");
-    setIsProcessing(false);
-    return;
-  }
+    if (
+      !nombreUsuario.trim() ||
+      !password.trim() ||
+      !rpassword.trim() ||
+      !correo.trim()
+    ) {
+      Swal.fire("Error", "Todos los campos son obligatorios", "warning");
+      setIsProcessing(false);
+      return;
+    }
+    if (password !== rpassword) {
+      Swal.fire("Error", "Las contraseñas no coinciden", "warning");
+      setIsProcessing(false);
+      return;
+    }
+    if (!emailRegex.test(correo)) {
+      Swal.fire("Error", "Por favor ingresa un correo electrónico válido", "warning");
+      setIsProcessing(false);
+      return;
+    }
 
-  // Validación de email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(correo)) {
-    alert("Por favor ingresa un correo electrónico válido");
-    setIsProcessing(false);
-    return;
-  }
-
-  try {
-    const response = await clienteAxios.post(
-      "/usuarios", 
-      {
-        nombreUsuario: nombreUsuario.trim(),
-        correo: correo.trim(),
-        password: password.trim(),
-        rol: "usuario"
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+    try {
+      const response = await clienteAxios.post(
+        "/usuarios",
+        {
+          nombreUsuario: nombreUsuario.trim(),
+          correo: correo.trim(),
+          password: password.trim(),
+          rol: "usuario",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
         }
-      }
-    );
+      );
 
-    if (response.status === 201) {
-      alert(response.data?.msg || "Registro exitoso! Redirigiendo...");
-      
-      // Limpiar formulario
-      setFormRegister({
-        nombreUsuario: "",
-        correo: "",
-        password: "",
-        rpassword: ""
-      });
-      
-      // Redirección más limpia (evita recarga completa)
-      navigate("/login", { replace: true });
-    }
-  } catch (error) {
-    console.error("Error detallado:", error);
-    
-    // Manejo de errores mejorado
-    let errorMessage = "Error al registrar";
-    
-    if (error.response) {
-      if (error.response.data?.msg) {
-        errorMessage = error.response.data.msg;
-      } else if (error.response.status === 500) {
-        errorMessage = "El usuario se creó pero hubo un error en la respuesta del servidor";
+      if (response.status === 201) {
+        Swal.fire("¡Éxito!", response.data?.msg || "Registro exitoso!", "success");
+        setFormRegister({ nombreUsuario: "", correo: "", password: "", rpassword: "" });
+        navigate("/login", { replace: true });
       }
-    } else if (error.request) {
-      errorMessage = "El servidor no respondió. Verifica tu conexión";
+    } catch (error) {
+      console.error("Error detallado:", error);
+      let errorMessage = "Error al registrar";
+      if (error.response) {
+        if (error.response.data?.msg) {
+          errorMessage = error.response.data.msg;
+        } else if (error.response.status === 500) {
+          errorMessage = "El usuario se creó pero hubo un error en el servidor";
+        }
+      } else if (error.request) {
+        errorMessage = "El servidor no respondió. Verifica tu conexión";
+      }
+      Swal.fire("Error", errorMessage, "error");
+    } finally {
+      setIsProcessing(false);
     }
-    
-    alert(errorMessage);
-  } finally {
-    setIsProcessing(false);
-  }
-};
-
-   
+  };
 
   /* Login */
   const handleClickLogin = async (e) => {
     e.preventDefault();
     const { nombreUsuario, password } = formLogin;
-    if (!nombreUsuario || !password) {
-      alert("Algún campo está vacío");
+    if (!nombreUsuario.trim() || !password.trim()) {
+      Swal.fire("Error", "Algún campo está vacío", "warning");
       return;
     }
+    setIsProcessing(true);
     try {
-      const result = await clienteAxios.post('/usuarios/login', {
-        nombreUsuario,
-        password
-      }, configHeaders);
+      const result = await clienteAxios.post(
+        "/usuarios/login",
+        { nombreUsuario: nombreUsuario.trim(), password: password.trim() },
+        configHeaders
+      );
       if (result.status === 200) {
-        alert(`${result.data.msg}`);
+        Swal.fire("¡Bienvenido!", result.data.msg, "success");
         sessionStorage.setItem("token", JSON.stringify(result.data.token));
         sessionStorage.setItem("rol", JSON.stringify(result.data.rol));
-        sessionStorage.setItem("idUsuario", JSON.stringify(result.data.idUsuario));
-        if (result.data.rol === "usuario") {
-          setTimeout(() => {
-            navigate("/");
-          }, 1000);
-        } else {
-          setTimeout(() => {
-            navigate("/administrador");
-          }, 1000);
-        }
+        sessionStorage.setItem(
+          "idUsuario",
+          JSON.stringify(result.data.idUsuario)
+        );
+        sessionStorage.setItem(
+          "nombreUsuario",
+          JSON.stringify(result.data.nombreUsuario)
+        );
+        setTimeout(() => {
+          navigate(result.data.rol === "usuario" ? "/" : "/administrador");
+        }, 1000);
       }
     } catch (error) {
-      alert("Error al iniciar sesión");
+      Swal.fire("Error", "No se pudo iniciar sesión", "error");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -147,84 +147,112 @@ const FormularioRegistro = ({ idPage }) => {
           {idPage !== "login" ? "Crear Cuenta" : "Iniciar Sesión"}
         </h2>
 
-        {/* Campo de Usuario */}
+        {/* Nombre de Usuario */}
         <div className="mb-6">
-          <label htmlFor="nombreUsuario" className="block text-sm font-medium mb-2 text-blanco">
+          <label
+            htmlFor="nombreUsuario"
+            className="block text-sm font-medium mb-2 text-blanco"
+          >
             Nombre de Usuario
           </label>
           <input
             type="text"
             id="nombreUsuario"
-            placeholder="Ej: usuario123"
             name="nombreUsuario"
+            placeholder="Ej: usuario123"
             onChange={idPage === "login" ? handleChangeLogin : handleChangeregister}
-            className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa focus:border-transparent transition-all"
+            value={
+              idPage === "login"
+                ? formLogin.nombreUsuario
+                : formRegister.nombreUsuario
+            }
+            className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa transition-all"
             required
           />
         </div>
 
-        {/* Campo de Correo (solo para registro) */}
+        {/* Correo (solo registro) */}
         {idPage !== "login" && (
           <div className="mb-6">
-            <label htmlFor="correo" className="block text-sm font-medium mb-2 text-blanco">
+            <label
+              htmlFor="correo"
+              className="block text-sm font-medium mb-2 text-blanco"
+            >
               Correo Electrónico
             </label>
             <input
               type="email"
               id="correo"
-              placeholder="Ej: usuario@email.com"
               name="correo"
+              placeholder="usuario@email.com"
               onChange={handleChangeregister}
-              className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa focus:border-transparent transition-all"
+              value={formRegister.correo}
+              className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa transition-all"
               required
             />
           </div>
         )}
 
-        {/* Campo de Contraseña */}
+        {/* Contraseña */}
         <div className="mb-6">
-          <label htmlFor="password" className="block text-sm font-medium mb-2 text-blanco">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium mb-2 text-blanco"
+          >
             Contraseña
           </label>
           <input
             type="password"
             id="password"
-            placeholder="••••••••"
             name="password"
+            placeholder="••••••••"
             onChange={idPage === "login" ? handleChangeLogin : handleChangeregister}
-            className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa focus:border-transparent transition-all"
+            value={
+              idPage === "login"
+                ? formLogin.password
+                : formRegister.password
+            }
+            className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa transition-all"
             required
           />
         </div>
 
-        {/* Campo de Repetir Contraseña (solo para registro) */}
+        {/* Confirmar contraseña (solo registro) */}
         {idPage !== "login" && (
           <div className="mb-8">
-            <label htmlFor="rpassword" className="block text-sm font-medium mb-2 text-blanco">
+            <label
+              htmlFor="rpassword"
+              className="block text-sm font-medium mb-2 text-blanco"
+            >
               Confirmar Contraseña
             </label>
             <input
               type="password"
               id="rpassword"
-              placeholder="••••••••"
               name="rpassword"
+              placeholder="••••••••"
               onChange={handleChangeregister}
-              className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa focus:border-transparent transition-all"
+              value={formRegister.rpassword}
+              className="w-full px-4 py-3 bg-white/5 border border-lila/30 rounded-xl text-blanco placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-rosa transition-all"
               required
             />
           </div>
         )}
 
-        {/* Botón de Envío */}
+        {/* Botón */}
         <button
           type="button"
           onClick={idPage === "login" ? handleClickLogin : handleClickRegister}
           disabled={isProcessing}
-          className={`w-full py-3.5 px-4 bg-gradient-to-r from-rosa to-fucsia text-white font-medium rounded-xl hover:from-fucsia hover:to-rosa transition-all duration-300 shadow-lg hover:shadow-rosa/30 focus:outline-none focus:ring-2 focus:ring-rosa focus:ring-opacity-50 ${
+          className={`w-full py-3.5 bg-gradient-to-r from-rosa to-fucsia text-white font-medium rounded-xl hover:from-fucsia hover:to-rosa transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-rosa ${
             isProcessing ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {isProcessing ? "Procesando..." : idPage !== "login" ? "Registrarse" : "Ingresar"}
+          {isProcessing
+            ? "Procesando..."
+            : idPage !== "login"
+            ? "Registrarse"
+            : "Ingresar"}
         </button>
 
         {/* Enlace alternativo */}
@@ -232,15 +260,21 @@ const FormularioRegistro = ({ idPage }) => {
           <p className="text-sm text-blanco/70">
             {idPage === "login" ? (
               <>
-                ¿No tienes una cuenta?{" "}
-                <a href="/registro" className="font-medium text-rosa hover:text-fucsia underline transition-colors">
+                ¿No tienes cuenta?{" "}
+                <a
+                  href="/registro"
+                  className="text-rosa hover:text-fucsia underline"
+                >
                   Regístrate
                 </a>
               </>
             ) : (
               <>
                 ¿Ya tienes cuenta?{" "}
-                <a href="/login" className="font-medium text-rosa hover:text-fucsia underline transition-colors">
+                <a
+                  href="/login"
+                  className="text-rosa hover:text-fucsia underline"
+                >
                   Inicia sesión
                 </a>
               </>
