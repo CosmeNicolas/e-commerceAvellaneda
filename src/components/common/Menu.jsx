@@ -211,7 +211,7 @@ const Menu = () => {
 
               {isLoggedIn() ? (
                 <>
-                  <span className="text-white/80 px-2">Hola, {nombreUsuario}❤️</span>
+                  <span className="text-white/80 px-2">Bienvenido/a {nombreUsuario}❤️</span>
 
                   <Button
                     fullWidth
