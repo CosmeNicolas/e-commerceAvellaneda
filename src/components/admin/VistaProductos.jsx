@@ -16,6 +16,8 @@ const VistaProductos = () => {
     nombreProducto: "",
     descripcion: "",
     precio: 0,
+    categoria: "",
+    stockPorTalle: { S: 0, M: 0, L: 0, XL: 0, XXL: 0 }
   });
   const [productoEdit, setProductoEdit] = useState(null);
   const [imagenProducto, setImagenProducto] = useState(null);
@@ -40,9 +42,17 @@ const VistaProductos = () => {
     setNuevoProducto({ ...nuevoProducto, [e.target.name]: e.target.value });
   };
 
-  const handleChangeEditarProducto = (e) => {
-    setProductoEdit({ ...productoEdit, [e.target.name]: e.target.value });
-  };
+  const categorias = [
+    'COLECCION OTOÑO INVIERNO 2025',
+    'CAMPERAS Y ABRIGOS',
+    'CHALECOS',
+    'POLLERAS Y SHORT',
+    'SASTRERIA',
+    'PANTALON',
+    'CAMISAS Y REMERAS'
+  ];
+
+  const talles = ['S', 'M', 'L', 'XL', 'XXL'];
 
   const crearProducto = async (e) => {
     e.preventDefault();
@@ -66,130 +76,38 @@ const VistaProductos = () => {
       }
 
       setShowCrear(false);
-      setNuevoProducto({ nombreProducto: "", descripcion: "", precio: 0 });
+      setNuevoProducto({
+        nombreProducto: "",
+        descripcion: "",
+        precio: 0,
+        categoria: "",
+        stockPorTalle: { S: 0, M: 0, L: 0, XL: 0, XXL: 0 }
+      });
       setImagenProducto(null);
       await verProductos();
       Swal.fire({
         title: "Éxito",
         text: "Producto creado correctamente",
         icon: "success",
-        confirmButtonColor: "#E966A0",   // rosa
-        background: "#191825",           // negroMate
-        color: "#FAF1E6",                // blanco
-        iconColor: "#FB2576"             // fucsia
+        confirmButtonColor: "#E966A0",
+        background: "#191825",
+        color: "#FAF1E6",
+        iconColor: "#FB2576"
       });
-      
     } catch (error) {
       Swal.fire({
         title: "Error",
         text: "No se pudo crear el producto",
         icon: "error",
-        confirmButtonColor: "#FB2576",   // fucsia
-        background: "#191825",           // negroMate
-        color: "#FAF1E6",                // blanco
-        iconColor: "#E966A0"             // rosa
+        confirmButtonColor: "#FB2576",
+        background: "#191825",
+        color: "#FAF1E6",
+        iconColor: "#E966A0"
       });
-      
     } finally {
       setCargando(false);
     }
   };
-
-  const editarProducto = async (e) => {
-    e.preventDefault();
-    setCargando(true);
-    try {
-      await clienteAxios.put(
-        `/productos/${productoEdit._id}`,
-        productoEdit,
-        configHeaders()
-      );
-
-      if (imagenProducto) {
-        const formData = new FormData();
-        formData.append("imagen", imagenProducto);
-        await clienteAxios.post(
-          `/productos/agregarImagen/${productoEdit._id}`,
-          formData,
-          configHeadersImagen
-        );
-      }
-
-      setShowEditar(false);
-      setProductoEdit(null);
-      setImagenProducto(null);
-      await verProductos();
-      Swal.fire({
-        title: "Éxito",
-        text: "Producto actualizado",
-        icon: "success",
-        confirmButtonColor: "#FB2576",   // fucsia
-        background: "#191825",           // negroMate
-        color: "#FAF1E6",                // blanco
-        iconColor: "#E384FF"             // lila
-      });
-      
-    } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "No se pudo actualizar",
-        icon: "error",
-        confirmButtonColor: "#E966A0",   // rosa
-        background: "#191825",           // negroMate
-        color: "#FAF1E6",                // blanco
-        iconColor: "#FB2576"             // fucsia
-      });
-      
-    } finally {
-      setCargando(false);
-    }
-  };
-
-  const eliminarProducto = async (id) => {
-    const confirm = await Swal.fire({
-      title: "¿Eliminar producto?",
-      text: "Esta acción no se puede deshacer",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: "#FB2576",   // fucsia
-      cancelButtonColor: "#E966A0",    // rosa
-      background: "#191825",           // negroMate
-      color: "#FAF1E6",                // blanco
-      iconColor: "#E384FF"             // lila
-    });
-  
-    if (confirm.isConfirmed) {
-      setCargando(true);
-      try {
-        await clienteAxios.delete(`/productos/${id}`, configHeaders());
-        await verProductos();
-        Swal.fire({
-          title: "Eliminado",
-          text: "Producto eliminado",
-          icon: "success",
-          confirmButtonColor: "#E966A0",
-          background: "#191825",
-          color: "#FAF1E6",
-          iconColor: "#FB2576"
-        });
-      } catch (error) {
-        Swal.fire({
-          title: "Error",
-          text: "No se pudo eliminar",
-          icon: "error",
-          confirmButtonColor: "#E966A0",
-          background: "#191825",
-          color: "#FAF1E6",
-          iconColor: "#FB2576"
-        });
-      } finally {
-        setCargando(false);
-      }
-    }
-  };
-  
 
   return (
     <div className="relative overflow-x-auto">
@@ -216,8 +134,8 @@ const VistaProductos = () => {
             <th className="px-4 py-2">Nombre</th>
             <th className="px-4 py-2">Descripción</th>
             <th className="px-4 py-2">Precio</th>
+            <th className="px-4 py-2">Categoría</th>
             <th className="px-4 py-2">Imagen</th>
-            <th className="px-4 py-2">Opciones</th>
           </tr>
         </thead>
         <tbody>
@@ -226,31 +144,13 @@ const VistaProductos = () => {
               <td className="px-4 py-2">{producto.nombreProducto}</td>
               <td className="px-4 py-2">{producto.descripcion}</td>
               <td className="px-4 py-2">${producto.precio}</td>
+              <td className="px-4 py-2">{producto.categoria}</td>
               <td className="px-4 py-2">
                 <img
                   src={producto.imagen}
                   alt="producto"
                   className="w-16 h-16 object-cover"
                 />
-              </td>
-              <td className="px-4 py-2">
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    className="bg-yellow-500 text-white px-3 py-1 rounded"
-                    onClick={() => {
-                      setProductoEdit(producto);
-                      setShowEditar(true);
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                    onClick={() => eliminarProducto(producto._id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
               </td>
             </tr>
           ))}
@@ -262,36 +162,81 @@ const VistaProductos = () => {
           <div className="bg-white p-6 rounded-lg w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Crear Producto</h2>
             <form onSubmit={crearProducto}>
+              <label className="block font-semibold mb-1">Nombre del producto</label>
               <input
                 type="text"
                 name="nombreProducto"
-                placeholder="Nombre del producto"
                 value={nuevoProducto.nombreProducto}
                 onChange={handleChangeNuevoProducto}
                 className="w-full border p-2 mb-3 rounded"
+                placeholder="Ej: Campera acolchada"
+                required
               />
+
+              <label className="block font-semibold mb-1">Descripción</label>
               <input
                 type="text"
                 name="descripcion"
-                placeholder="Descripción"
                 value={nuevoProducto.descripcion}
                 onChange={handleChangeNuevoProducto}
                 className="w-full border p-2 mb-3 rounded"
+                placeholder="Ej: Campera invierno con cierre y capucha"
+                required
               />
+
+              <label className="block font-semibold mb-1">Precio</label>
               <input
                 type="number"
                 name="precio"
-                placeholder="Precio"
                 value={nuevoProducto.precio}
                 onChange={handleChangeNuevoProducto}
                 className="w-full border p-2 mb-3 rounded"
+                placeholder="Ej: 15999"
+                required
               />
+
+              <label className="block font-semibold mb-1">Categoría</label>
+              <select
+                name="categoria"
+                value={nuevoProducto.categoria}
+                onChange={handleChangeNuevoProducto}
+                className="w-full border p-2 mb-3 rounded"
+                required
+              >
+                <option value="">Seleccionar categoría</option>
+                {categorias.map((cat, i) => (
+                  <option key={i} value={cat}>{cat}</option>
+                ))}
+              </select>
+
+              <label className="block font-semibold mb-1">Stock por talle</label>
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {talles.map((talle) => (
+                  <div key={talle} className="flex flex-col">
+                    <label className="text-sm font-medium">{talle}</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={nuevoProducto.stockPorTalle?.[talle] || 0}
+                      onChange={(e) => {
+                        const nuevoStock = { ...nuevoProducto.stockPorTalle, [talle]: parseInt(e.target.value) || 0 };
+                        setNuevoProducto({ ...nuevoProducto, stockPorTalle: nuevoStock });
+                      }}
+                      className="border p-1 rounded"
+                      placeholder="0"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <label className="block font-semibold mb-1">Imagen del producto</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => setImagenProducto(e.target.files[0])}
                 className="w-full border p-2 mb-4 rounded"
               />
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -305,58 +250,6 @@ const VistaProductos = () => {
                   className="px-4 py-2 bg-blue-600 text-white rounded"
                 >
                   Crear
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {showEditar && productoEdit && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Editar Producto</h2>
-            <form onSubmit={editarProducto}>
-              <input
-                type="text"
-                name="nombreProducto"
-                value={productoEdit.nombreProducto}
-                onChange={handleChangeEditarProducto}
-                className="w-full border p-2 mb-3 rounded"
-              />
-              <input
-                type="text"
-                name="descripcion"
-                value={productoEdit.descripcion}
-                onChange={handleChangeEditarProducto}
-                className="w-full border p-2 mb-3 rounded"
-              />
-              <input
-                type="number"
-                name="precio"
-                value={productoEdit.precio}
-                onChange={handleChangeEditarProducto}
-                className="w-full border p-2 mb-3 rounded"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImagenProducto(e.target.files[0])}
-                className="w-full border p-2 mb-4 rounded"
-              />
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEditar(false)}
-                  className="px-4 py-2 bg-gray-400 text-white rounded"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Guardar
                 </button>
               </div>
             </form>

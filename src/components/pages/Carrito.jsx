@@ -35,7 +35,7 @@ const Carrito = () => {
           <div className="space-y-4">
             {carrito.map((item) => (
               <div
-                key={item._id}
+                key={`${item._id}-${item.talleSeleccionado}`}
                 className="flex items-center gap-4 border-b border-white/10 pb-4"
               >
                 <img
@@ -46,6 +46,10 @@ const Carrito = () => {
                 <div className="flex-1">
                   <p className="font-semibold text-white">
                     {item.nombreProducto}
+                  </p>
+
+                  <p className="text-sm text-gray-400 mt-1">
+                    Talle: <span className="uppercase font-medium">{item.talleSeleccionado}</span>
                   </p>
 
                   <div className="flex items-center gap-2 mt-1">
@@ -67,7 +71,9 @@ const Carrito = () => {
                   </div>
 
                   <p className="text-sm text-rosa/90 mt-1">
-                    Subtotal: ${(item.precio * item.cantidad).toFixed(2)}
+                    Subtotal: ${
+                      (item.precio * item.cantidad).toLocaleString("es-AR")
+                    }
                   </p>
                   <Link
                     to={`/detalleProducto/${item._id}`}
@@ -89,7 +95,7 @@ const Carrito = () => {
 
           <div className="mt-6 text-right">
             <p className="text-xl font-bold mb-4 text-fucsia">
-              Total: ${total.toFixed(2)}
+              Total: ${total.toLocaleString("es-AR")}
             </p>
 
             <div className="flex justify-end mb-4">
