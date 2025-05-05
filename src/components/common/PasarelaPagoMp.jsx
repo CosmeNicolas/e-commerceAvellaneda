@@ -3,25 +3,55 @@ import clienteAxios, { configHeaders } from "../../config/axios";
 import "../../css/PasarelaPagoMp.css";
 import mpLogo from "../../img/mercadopagoLogo.svg";
 import { useEffect, useState } from "react";
+import { useCart } from "../helpers/CartContexts";
 
 const PasarelaPagoMp = ({ producto }) => {
-  const [preferenceId, setPreferenceId] = useState(null); // Estado para almacenar el preference_id de Mercado Pago
+  const [preferenceId, setPreferenceId] = useState(null);
+  const { carrito } = useCart();
 
   useEffect(() => {
-    // Crear la preferencia de pago al cargar el componente
     const crearPreferencia = async () => {
       try {
+        let items = [];
+
+        if (producto.nombreProducto !== "Compra desde carrito") {
+          items = [
+            {
+              nombre: producto.nombreProducto,
+              precio: Number(producto.precio),
+              cantidad: 1,
+            },
+          ];
+
+          // Guardamos individual en localStorage
+          localStorage.setItem(
+            "carritoTemporal",
+            JSON.stringify([
+              {
+                _id: producto._id,
+                nombreProducto: producto.nombreProducto,
+                precio: producto.precio,
+                cantidad: 1,
+                talleSeleccionado: producto.talleSeleccionado || "UNICO",
+              },
+            ])
+          );
+        } else {
+          // Desde carrito
+          items = carrito.map((item) => ({
+            nombre: item.nombreProducto,
+            precio: Number(item.precio),
+            cantidad: Number(item.cantidad),
+          }));
+
+          localStorage.setItem("carritoTemporal", JSON.stringify(carrito));
+        }
+
         const response = await clienteAxios.post(
           "/pagos/crear-pago",
           {
             userId: "test_user_123",
-            items: [
-              {
-                nombre: producto.nombreProducto,
-                precio: Number(producto.precio),
-                cantidad: 1,
-              },
-            ],
+            items,
           },
           configHeaders
         );
@@ -40,7 +70,7 @@ const PasarelaPagoMp = ({ producto }) => {
     if (producto) {
       crearPreferencia();
     }
-  }, [producto]);
+  }, [producto, carrito]);
 
   const handlePagar = () => {
     if (preferenceId) {
@@ -53,23 +83,13 @@ const PasarelaPagoMp = ({ producto }) => {
   return (
     <div className="flex justify-center items-center">
       {preferenceId ? (
-        <div className="flex justify-center items-center">
-          {preferenceId ? (
-            <button
-              onClick={handlePagar}
-              className="flex items-center gap-3 bg-[#009EE3] hover:bg-[#00B4FF] text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-md transform transition-transform hover:-translate-y-1 hover:shadow-lg"
-            >
-              <img src={mpLogo} alt="Mercado Pago" className="w-14 h-10" />
-              <span className="text-sm md:text-base">
-                Pagar con Mercado Pago
-              </span>
-            </button>
-          ) : (
-            <p className="text-center text-gray-500">
-              Cargando la pasarela de pago...
-            </p>
-          )}
-        </div>
+        <button
+          onClick={handlePagar}
+          className="flex items-center gap-3 bg-[#009EE3] hover:bg-[#00B4FF] text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg shadow-md transform transition-transform hover:-translate-y-1 hover:shadow-lg"
+        >
+          <img src={mpLogo} alt="Mercado Pago" className="w-14 h-10" />
+          <span className="text-sm md:text-base">Pagar con Mercado Pago</span>
+        </button>
       ) : (
         <p className="text-center text-gray-500">
           Cargando la pasarela de pago...
