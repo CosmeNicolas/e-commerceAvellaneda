@@ -1,7 +1,9 @@
 import { useCart } from "../helpers/CartContexts";
 import PasarelaPagoMp from "../common/PasarelaPagoMp";
+import ModalDatosCliente from "../common/ModalDatosCliente";
 import { Button } from "@nextui-org/react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Carrito = () => {
   const {
@@ -16,6 +18,18 @@ const Carrito = () => {
     (acc, item) => acc + item.precio * item.cantidad,
     0
   );
+
+  const [datosCompletos, setDatosCompletos] = useState(false);
+
+  useEffect(() => {
+    const email = localStorage.getItem("emailCliente");
+    const direccion = localStorage.getItem("direccionCliente");
+    const telefono = localStorage.getItem("telefonoCliente");
+    const dni = localStorage.getItem("dniCliente");
+    if (email && direccion && telefono && dni) {
+      setDatosCompletos(true);
+    }
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -99,12 +113,16 @@ const Carrito = () => {
             </p>
 
             <div className="flex justify-end mb-4">
-              <PasarelaPagoMp
-                producto={{
-                  nombreProducto: "Compra desde carrito",
-                  precio: total,
-                }}
-              />
+              {!datosCompletos ? (
+                <ModalDatosCliente onDatosGuardados={() => setDatosCompletos(true)} />
+              ) : (
+                <PasarelaPagoMp
+                  producto={{
+                    nombreProducto: "Compra desde carrito",
+                    precio: total,
+                  }}
+                />
+              )}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-end gap-4">
